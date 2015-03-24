@@ -6,7 +6,7 @@ This repository is a collection of codemod scripts based on
 ### Setup & Run
 
   * `npm install`
-  * `./jscodeshift -t <codemod-script> <file>`
+  * `./jscodeshift <codemod-script> <file>`
   * Use the `-d` option for a dry-run and use `-p` to print the output
     for comparison
 
@@ -14,4 +14,4 @@ This repository is a collection of codemod scripts based on
 
 `use-strict.js` adds a top-level `'use strict'` statement to JavaScript files
 
-  * `./jscodeshift -t build/use-strict.js <file>`
+  * `./jscodeshift use-strict <file>`
