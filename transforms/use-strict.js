@@ -1,28 +1,30 @@
-function hasStrictMode(body) {
-  return body.some(
-    statement => j.match(statement, {
-      type: 'ExpressionStatement',
-      expression: {
-        type: 'Literal',
-        value: 'use strict',
-      },
-    })
-  );
-}
+function addUseStrict(file, api, options) {
+  var j = api.jscodeshift;
 
-function withComments(expression, node) {
-  expression.comments = node.comments;
-  return expression;
-}
+  function hasStrictMode(body) {
+    return body.some(
+      statement => j.match(statement, {
+        type: 'ExpressionStatement',
+        expression: {
+          type: 'Literal',
+          value: 'use strict',
+        },
+      })
+    );
+  }
 
-function createUseStrictExpression() {
-  return j.expressionStatement(
-    j.literal('use strict')
-  );
-}
+  function withComments(expression, node) {
+    expression.comments = node.comments;
+    return expression;
+  }
 
-function addUseStrict(file, source, options) {
-  var root = j(source);
+  function createUseStrictExpression() {
+    return j.expressionStatement(
+      j.literal('use strict')
+    );
+  }
+
+  var root = j(file.source);
   var body = root.get().value.body;
 
   if (!body.length || hasStrictMode(body)) {

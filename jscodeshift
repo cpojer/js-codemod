@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DIR=$(cd `dirname $0` && pwd)
+DIR=$(npm root -g)/js-codemod
 TRANSFORM=$1
 shift
 
