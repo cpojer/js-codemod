@@ -26,7 +26,7 @@ function test(transformName, testFileName, options) {
 
   var transform = require('../../transforms/' + transformName);
   expect(
-    (transform({path, source}, {jscodeshift}, options) || '').trim()
+    (transform({path, source}, {jscodeshift}, options || {}) || '').trim()
   ).toEqual(
     output.trim()
   );
@@ -42,6 +42,14 @@ describe('Transform Tests', () => {
     });
 
     test('use-strict', 'use-strict-test2');
+  });
+
+  it('transforms the "arrow function" tests correctly', () => {
+    test('arrow-function', 'arrow-function-test', {
+      'inline-single-expressions': true
+    });
+
+    test('arrow-function', 'arrow-function-test2');
   });
 
 });

@@ -1,8 +1,8 @@
 function addUseStrict(file, api, options) {
-  var j = api.jscodeshift;
+  const j = api.jscodeshift;
 
-  function hasStrictMode(body) {
-    return body.some(
+  const hasStrictMode = body =>
+    body.some(
       statement => j.match(statement, {
         type: 'ExpressionStatement',
         expression: {
@@ -11,21 +11,19 @@ function addUseStrict(file, api, options) {
         },
       })
     );
-  }
 
-  function withComments(expression, node) {
-    expression.comments = node.comments;
-    return expression;
-  }
+  const withComments = (to, from) => {
+    to.comments = from.comments;
+    return to;
+  };
 
-  function createUseStrictExpression() {
-    return j.expressionStatement(
+  const createUseStrictExpression = () =>
+    j.expressionStatement(
       j.literal('use strict')
     );
-  }
 
-  var root = j(file.source);
-  var body = root.get().value.body;
+  const root = j(file.source);
+  const body = root.get().value.body;
 
   if (!body.length || hasStrictMode(body)) {
     return null;
@@ -35,7 +33,7 @@ function addUseStrict(file, api, options) {
   body[0].comments = body[1].comments;
   delete body[1].comments;
 
-  return root.toSource(options && options.printOptions);
+  return root.toSource(options.printOptions || {quote: 'single'});
 };
 
 module.exports = addUseStrict;

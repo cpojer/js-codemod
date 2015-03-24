@@ -1,7 +1,7 @@
 {
   "name": "js-codemod",
   "author": "Christoph Pojer",
-  "version": "1.0.0",
+  "version": "5.0.0",
   "description": "Codemod scripts to transform code to next generation JS",
   "license": "MIT",
   "repository": {
@@ -15,7 +15,7 @@
     "prepublish": "npm run build"
   },
   "bin": {
-    "jscodeshift": "./bin/jscodeshift.sh"
+    "js-codemod": "./js-codemod"
   },
   "keywords": [
     "codemod",
