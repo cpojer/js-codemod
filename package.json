@@ -1,16 +1,15 @@
 {
   "name": "js-codemod",
   "author": "Christoph Pojer",
-  "version": "5.0.0",
+  "version": "6.0.0",
   "description": "Codemod scripts to transform code to next generation JS",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/cpojer/js-codemod.git"
   },
-  "scripts": {
-    "build": "rm -rf build; jsx --harmony transforms/ build/",
-    "watch": "jsx transforms/ build/ -w",
+    "scripts": {
+    "build": "rm -rf build; babel transforms/ --out-dir=build/",
     "test": "jest",
     "prepublish": "npm run build"
   },
@@ -25,11 +24,14 @@
     "jscodeshift": "^0.1.0"
   },
   "devDependencies": {
-    "jest-cli": "^0.4.0",
-    "react-tools": "^0.13.1"
+    "babel": "^4.7.16",
+    "babel-jest": "^4.0.0",
+    "jest-cli": "^0.4.0"
   },
   "jest": {
-    "scriptPreprocessor": "./scripts/test-preprocess.js",
-    "testPathDirs": ["test"]
+    "scriptPreprocessor": "./node_modules/babel-jest",
+    "testPathDirs": [
+      "test"
+    ]
   }
 }
