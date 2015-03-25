@@ -12,11 +12,11 @@ This repository contains a collection of codemod scripts based on
 
 ### Included Scripts
 
-`use-strict.js` adds a top-level `'use strict'` statement to JavaScript files
+`use-strict` adds a top-level `'use strict'` statement to JavaScript files
 
   * `js-codemod use-strict <file>`
 
-`arrow-function.js` transforms functions to arrow functions
+`arrow-function` transforms functions to arrow functions
 
   * `js-codemod arrow-function <file>`
 
