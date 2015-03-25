@@ -64,4 +64,14 @@ describe('Transform Tests', () => {
     test('arrow-function-arguments', 'arrow-function-arguments-test');
   });
 
+  it('transforms the "relay set params" tests correctly', () => {
+    test('relay-set-params', 'relay-set-params-test');
+  });
+
+  it('transforms the "lazy containers" tests correctly', () => {
+    test('relay-lazy-containers', 'relay-lazy-containers-test');
+
+    test('relay-lazy-containers', 'relay-lazy-containers-test2');
+  });
+
 });
