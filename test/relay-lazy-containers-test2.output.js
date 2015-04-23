@@ -9,7 +9,7 @@ var Relay = require('Relay');
 
 var abc = 10;
 
-var A = Relay.createLazyContainer(__init, {});
+var A = Relay.createContainer(__init, {});
 
 A.myStatic = 10;
 

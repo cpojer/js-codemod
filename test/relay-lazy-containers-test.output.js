@@ -9,7 +9,7 @@ var Relay = require('Relay');
 
 var abc = 10;
 
-module.exports = Relay.createLazyContainer(__init, {});
+module.exports = Relay.createContainer(__init, {});
 
 function __init() {
   var MyThing = React.createClass({});

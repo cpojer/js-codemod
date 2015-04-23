@@ -74,4 +74,12 @@ describe('Transform Tests', () => {
     test('relay-lazy-containers', 'relay-lazy-containers-test2');
   });
 
+  it('transforms the "route" tests correctly', () => {
+    test('relay-route', 'relay-route-test');
+  });
+
+  it('transforms the "route2" tests correctly', () => {
+    test('relay-route2', 'relay-route2-test');
+  });
+
 });
