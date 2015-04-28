@@ -52,4 +52,8 @@ describe('Transform Tests', () => {
     test('arrow-function', 'arrow-function-test2');
   });
 
+  it('transforms the "insert super" tests correctly', () => {
+    test('insert-super', 'insert-super-test');
+  });
+
 });
