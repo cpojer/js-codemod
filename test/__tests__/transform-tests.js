@@ -37,14 +37,14 @@ describe('Transform Tests', () => {
   it('transforms the "use strict" tests correctly', () => {
     test('use-strict', 'use-strict-test', {
       printOptions: {
-        quote: 'single'
-      }
+        quote: 'single',
+      },
     });
   });
 
   it('transforms the "arrow function" tests correctly', () => {
     test('arrow-function', 'arrow-function-test', {
-      'inline-single-expressions': true
+      'inline-single-expressions': true,
     });
 
     test('arrow-function', 'arrow-function-test2');
@@ -80,6 +80,12 @@ describe('Transform Tests', () => {
 
   it('transforms the "route2" tests correctly', () => {
     test('relay-route2', 'relay-route2-test');
+  });
+
+  it('transforms the "route2" tests correctly', () => {
+    test('call-to-new', 'call-to-new-test', {
+      name: 'Call',
+    });
   });
 
 });
