@@ -56,4 +56,8 @@ describe('Transform Tests', () => {
     test('insert-super', 'insert-super-test');
   });
 
+  it('transforms the "arrow function arguments" tests correctly', () => {
+    test('arrow-function-arguments', 'arrow-function-arguments-test');
+  });
+
 });
