@@ -49,6 +49,39 @@ function insertSuper(file, api, options) {
   const hasSuperClass = path =>
     !!path.value.superClass;
 
+  const getCallArguments = (method, args) => {
+    if (method == 'call') {
+      return args.slice(1);
+    } else if(args[1]) {
+      return [j.spreadElement(args[1])];
+    } else {
+      return [];
+    }
+  };
+
+  const fixSuperCalls = path =>
+    ['call', 'apply'].forEach(method =>
+      j(getConstructor(path))
+        .find(j.CallExpression, {
+          callee: {
+            object: {
+              name: path.value.superClass.name,
+              type: 'Identifier',
+            },
+            property: {
+              name: method,
+              type: 'Identifier',
+            }
+          }
+        })
+        .forEach(p =>
+          j(p).replaceWith(j.callExpression(
+            j.identifier('super'),
+            getCallArguments(method, p.value.arguments)
+          ))
+        )
+      );
+
   const hasLazyThisExpressions = thisExpressions => {
     var isLazy = false;
     thisExpressions.forEach(p => {
@@ -118,6 +151,7 @@ function insertSuper(file, api, options) {
     .find(j.ClassDeclaration)
     .filter(hasSuperClass)
     .filter(hasConstructor)
+    .forEach(fixSuperCalls)
     .filter(needsSuperCall)
     .forEach(addSuperCall)
     .size() > 0;

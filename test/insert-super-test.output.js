@@ -54,3 +54,27 @@ class G extends A {
   }
 
 }
+
+class H extends A {
+
+  constructor() {
+    super('b', 'c');
+  }
+
+}
+
+class I extends A {
+
+  constructor() {
+    super(...rest);
+  }
+
+}
+
+class J extends A {
+
+  constructor() {
+    super();
+  }
+
+}

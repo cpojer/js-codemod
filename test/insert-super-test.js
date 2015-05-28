@@ -53,3 +53,27 @@ class G extends A {
   }
 
 }
+
+class H extends A {
+
+  constructor() {
+    A.call(this, 'b', 'c');
+  }
+
+}
+
+class I extends A {
+
+  constructor() {
+    A.apply(this, rest);
+  }
+
+}
+
+class J extends A {
+
+  constructor() {
+    A.apply(this);
+  }
+
+}
