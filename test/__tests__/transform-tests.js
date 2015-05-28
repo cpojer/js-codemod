@@ -56,6 +56,10 @@ describe('Transform Tests', () => {
     test('insert-super', 'insert-super-test');
   });
 
+  it('transforms the "rm merge" tests correctly', () => {
+    test('rm-merge', 'rm-merge-test');
+  });
+
   it('transforms the "arrow function arguments" tests correctly', () => {
     test('arrow-function-arguments', 'arrow-function-arguments-test');
   });
