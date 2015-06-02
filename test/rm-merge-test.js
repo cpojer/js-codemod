@@ -1,4 +1,4 @@
-'use strict';
+// Merge
 
 var merge = require('merge');
 

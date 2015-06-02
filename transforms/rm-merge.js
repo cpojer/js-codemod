@@ -25,7 +25,15 @@ function rmMerge(file, api, options) {
       ));
     } else {
       const grandParent = parent.parent.value;
-      grandParent.body = grandParent.body.filter(s => s !== parent.value);
+      const index = grandParent.body.indexOf(parent.value);
+      if (index != -1) {
+        grandParent.body = grandParent.body.filter(s => s !== parent.value);
+        if (parent.value.comments) {
+          // The item was removed, so the next one is at the item's index
+          const next = grandParent.body[index];
+          next.comments = parent.value.comments.concat(next.comments || []);
+        }
+      }
     }
   };
 
