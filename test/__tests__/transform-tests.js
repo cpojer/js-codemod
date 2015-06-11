@@ -60,6 +60,12 @@ describe('Transform Tests', () => {
     test('rm-merge', 'rm-merge-test');
   });
 
+  it('transforms the "rm copyProperties" tests correctly', () => {
+    test('rm-copyProperties', 'rm-copyProperties-test');
+
+    test('rm-copyProperties', 'rm-copyProperties-test2');
+  });
+
   it('transforms the "arrow function arguments" tests correctly', () => {
     test('arrow-function-arguments', 'arrow-function-arguments-test');
   });
