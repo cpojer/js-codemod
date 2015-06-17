@@ -8,9 +8,14 @@ function rmCopyProperties(file, api, options) {
   const printOptions = options.printOptions || {quote: 'single'};
   const root = j(file.source);
 
-  const onlyObjectLiterals = path =>
-    path.value.arguments.slice(1).every(
-      argument => argument.type == 'ObjectExpression'
+  const checkArguments = path =>
+    path.value.arguments.slice(1).every(argument =>
+      argument.type == 'ObjectExpression' ||
+      (
+        options.arbiterMixin &&
+        argument.type == 'Identifier' &&
+        argument.name == 'ArbiterMixin'
+      )
     );
 
   const availableFilters = {
@@ -22,6 +27,9 @@ function rmCopyProperties(file, api, options) {
         node.property.type == 'Identifier' &&
         node.property.name == 'prototype'
       );
+    },
+    onlyThisExpressions(path) {
+      return path.value.arguments[0].type == 'ThisExpression';
     }
   };
 
@@ -35,16 +43,15 @@ function rmCopyProperties(file, api, options) {
       path.value.arguments
     ));
 
-  const filters = [
-    onlyObjectLiterals,
-    ...(options.filters || []).map(filterName => availableFilters[filterName])
-  ];
+  const filters =
+    (options.filters || []).map(filterName => availableFilters[filterName]);
 
   const declarator = getRequireCall(root, 'copyProperties');
   if (declarator) {
     const variableName = declarator.value.id.name;
     const didTransform = root
       .find(j.CallExpression, {callee: {name: variableName}})
+      .filter(checkArguments)
       .filter(p => filters.every(filter => filter(p)))
       .forEach(rmCopyPropertyCalls)
       .size() > 0;
