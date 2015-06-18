@@ -34,6 +34,13 @@ function rmCopyProperties(file, api, options) {
     onlyNewExpressions(path) {
       return path.value.arguments[0].type == 'NewExpression';
     },
+    onlyCapitalizedIdentifiers(path) {
+      var node = path.value.arguments[0];
+      return (
+        node.type == 'Identifier' &&
+        node.name.charAt(0) == node.name.charAt(0).toUpperCase()
+      );
+    },
   };
 
   const rmCopyPropertyCalls = path =>
