@@ -30,7 +30,10 @@ function rmCopyProperties(file, api, options) {
     },
     onlyThisExpressions(path) {
       return path.value.arguments[0].type == 'ThisExpression';
-    }
+    },
+    onlyNewExpressions(path) {
+      return path.value.arguments[0].type == 'NewExpression';
+    },
   };
 
   const rmCopyPropertyCalls = path =>
