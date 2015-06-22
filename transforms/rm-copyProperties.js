@@ -8,6 +8,27 @@ function rmCopyProperties(file, api, options) {
   const printOptions = options.printOptions || {quote: 'single'};
   const root = j(file.source);
 
+  const isOptionsOrConfig = node => {
+    if (node.type == 'Identifier' &&
+      (
+        node.name == 'options' ||
+        node.name == 'config'
+      )
+    ) {
+      return true;
+    }
+
+    if (node.type == 'LogicalExpression' && node.operator == '||') {
+      return (
+        isOptionsOrConfig(node.left) &&
+        node.right.type == 'ObjectExpression' &&
+        !node.right.properties.length
+      );
+    }
+
+    return false;
+  };
+
   const checkArguments = path =>
     path.value.arguments.slice(1).every(argument =>
       argument.type == 'ObjectExpression' ||
@@ -15,6 +36,10 @@ function rmCopyProperties(file, api, options) {
         options.arbiterMixin &&
         argument.type == 'Identifier' &&
         argument.name == 'ArbiterMixin'
+      ) ||
+      (
+        options.optionsOrConfig &&
+        isOptionsOrConfig(argument)
       )
     );
 
