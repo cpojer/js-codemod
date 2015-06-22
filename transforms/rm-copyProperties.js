@@ -41,6 +41,10 @@ function rmCopyProperties(file, api, options) {
         node.name.charAt(0) == node.name.charAt(0).toUpperCase()
       );
     },
+    onlyCallExpressions(path) {
+      var node = path.parent.value;
+      return node.type == 'ExpressionStatement';
+    }
   };
 
   const rmCopyPropertyCalls = path =>
