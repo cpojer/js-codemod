@@ -125,6 +125,7 @@ function insertSuper(file, api, options) {
     const superCalls = findSuperCall(j(constructor));
 
     if (superCalls.size() === 0) {
+      error(path, 'requires a super call.');
       return true;
     } else if (superCalls.size() > 1) {
       error(path, 'has multiple super calls.');
