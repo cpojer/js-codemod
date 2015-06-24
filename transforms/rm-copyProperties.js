@@ -117,6 +117,13 @@ function rmCopyProperties(file, api, options) {
     },
     onlyObjectExpressions(path) {
       return path.value.arguments[0].type == 'ObjectExpression';
+    },
+    onlyDefaults(path) {
+      var node = path.value.arguments[0];
+      return (
+        node.type == 'Identifier' &&
+        node.name == 'defaults'
+      );
     }
   };
 
