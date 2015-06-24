@@ -148,15 +148,15 @@ function rmCopyProperties(file, api, options) {
     options.filters.push('onlyObjectExpressions');
   }
 
-  const filters =
-    options.filters.map(filterName => availableFilters[filterName]);
+  const filters = (options.omitArgumentsCheck ? [] : [checkArguments]).concat(
+    options.filters.map(filterName => availableFilters[filterName])
+  );
 
   const declarator = getRequireCall(root, 'copyProperties');
   if (declarator) {
     const variableName = declarator.value.id.name;
     const didTransform = root
       .find(j.CallExpression, {callee: {name: variableName}})
-      .filter(checkArguments)
       .filter(p => filters.every(filter => filter(p)))
       .forEach(rmCopyPropertyCalls)
       .size() > 0;
