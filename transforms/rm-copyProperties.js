@@ -39,7 +39,9 @@ function rmCopyProperties(file, api, options) {
         node.name == 'options' ||
         node.name == 'config' ||
         node.name == 'defaults' ||
-        node.name == '_defaults'
+        node.name == '_defaults' ||
+        node.name == 'defaultOptions' ||
+        node.name == '_defaultOptions'
       )
     ) {
       return true;
