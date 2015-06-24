@@ -14,9 +14,21 @@ function rmCopyProperties(file, api, options) {
 
   const flatten = a => Array.isArray(a) ? [].concat(...a.map(flatten)) : a;
 
+  const getObject = node => {
+    if (
+      options.optionsOrConfig &&
+      node.type == 'LogicalExpression' &&
+      node.operator == '||' &&
+      isOptionsOrConfig(node)
+    ) {
+      return node.left;
+    }
+    return node;
+  };
+
   const inlineObjectExpression = path =>
     j(path).replaceWith(j.objectExpression(
-      flatten(path.value.arguments.map(p =>
+      flatten(path.value.arguments.map(getObject).map(p =>
         p.type == 'ObjectExpression' ? p.properties : j.spreadProperty(p)
       ))
     ));
@@ -25,7 +37,9 @@ function rmCopyProperties(file, api, options) {
     if (node.type == 'Identifier' &&
       (
         node.name == 'options' ||
-        node.name == 'config'
+        node.name == 'config' ||
+        node.name == 'defaults' ||
+        node.name == '_defaults'
       )
     ) {
       return true;
@@ -106,20 +120,23 @@ function rmCopyProperties(file, api, options) {
     }
   };
 
-  const rmCopyPropertyCalls = path =>
-    j(path).replaceWith(j.callExpression(
-      j.memberExpression(
-        j.identifier('Object'),
-        j.identifier('assign'),
-        false
-      ),
-      path.value.arguments
-    ));
+  const rmCopyPropertyCalls = path => {
+    if (availableFilters.onlyObjectExpressions(path)) {
+      inlineObjectExpression(path);
+    } else {
+      j(path).replaceWith(j.callExpression(
+        j.memberExpression(
+          j.identifier('Object'),
+          j.identifier('assign'),
+          false
+        ),
+        path.value.arguments.map(getObject)
+      ));
+    }
+  }
 
-  var updateCalls = rmCopyPropertyCalls;
   if (options.inlineStateAndProps) {
     options.filters.push('onlyObjectExpressions');
-    updateCalls = inlineObjectExpression;
   }
 
   const filters =
@@ -132,7 +149,7 @@ function rmCopyProperties(file, api, options) {
       .find(j.CallExpression, {callee: {name: variableName}})
       .filter(checkArguments)
       .filter(p => filters.every(filter => filter(p)))
-      .forEach(updateCalls)
+      .forEach(rmCopyPropertyCalls)
       .size() > 0;
     if (didTransform) {
       if (!root.find(j.CallExpression, {callee: {name: variableName}}).size()) {
