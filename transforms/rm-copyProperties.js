@@ -1,12 +1,25 @@
 // -----------------------------------------------------------------------------
 // Get rid of `copyProperties`
 function rmCopyProperties(file, api, options) {
+  if (!options.filters) {
+    options.filters = [];
+  }
+
   const j = api.jscodeshift;
 
   const {getRequireCall, removeRequire} = require('./utils/require')(j);
 
   const printOptions = options.printOptions || {quote: 'single'};
   const root = j(file.source);
+
+  const flatten = a => Array.isArray(a) ? [].concat(...a.map(flatten)) : a;
+
+  const inlineObjectExpression = path =>
+    j(path).replaceWith(j.objectExpression(
+      flatten(path.value.arguments.map(p =>
+        p.type == 'ObjectExpression' ? p.properties : j.spreadProperty(p)
+      ))
+    ));
 
   const isOptionsOrConfig = node => {
     if (node.type == 'Identifier' &&
@@ -29,6 +42,20 @@ function rmCopyProperties(file, api, options) {
     return false;
   };
 
+  const isStateOrProps = node => (
+    node.type == 'MemberExpression' &&
+    node.object &&
+    node.object.type == 'MemberExpression' &&
+    node.object.object &&
+    node.object.object.type == 'ThisExpression' &&
+    node.object.property &&
+    node.object.property.type == 'Identifier' &&
+    (
+      node.object.property.name == 'state' ||
+      node.object.property.name == 'props'
+    )
+  );
+
   const checkArguments = path =>
     path.value.arguments.slice(1).every(argument =>
       argument.type == 'ObjectExpression' ||
@@ -40,6 +67,10 @@ function rmCopyProperties(file, api, options) {
       (
         options.optionsOrConfig &&
         isOptionsOrConfig(argument)
+      ) ||
+      (
+        options.inlineStateAndProps &&
+        isStateOrProps(argument)
       )
     );
 
@@ -69,6 +100,9 @@ function rmCopyProperties(file, api, options) {
     onlyCallExpressions(path) {
       var node = path.parent.value;
       return node.type == 'ExpressionStatement';
+    },
+    onlyObjectExpressions(path) {
+      return path.value.arguments[0].type == 'ObjectExpression';
     }
   };
 
@@ -82,8 +116,14 @@ function rmCopyProperties(file, api, options) {
       path.value.arguments
     ));
 
+  var updateCalls = rmCopyPropertyCalls;
+  if (options.inlineStateAndProps) {
+    options.filters.push('onlyObjectExpressions');
+    updateCalls = inlineObjectExpression;
+  }
+
   const filters =
-    (options.filters || []).map(filterName => availableFilters[filterName]);
+    options.filters.map(filterName => availableFilters[filterName]);
 
   const declarator = getRequireCall(root, 'copyProperties');
   if (declarator) {
@@ -92,7 +132,7 @@ function rmCopyProperties(file, api, options) {
       .find(j.CallExpression, {callee: {name: variableName}})
       .filter(checkArguments)
       .filter(p => filters.every(filter => filter(p)))
-      .forEach(rmCopyPropertyCalls)
+      .forEach(updateCalls)
       .size() > 0;
     if (didTransform) {
       if (!root.find(j.CallExpression, {callee: {name: variableName}}).size()) {
