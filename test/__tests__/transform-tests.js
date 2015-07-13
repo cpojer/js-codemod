@@ -54,6 +54,10 @@ describe('Transform Tests', () => {
 
   it('transforms the "insert super" tests correctly', () => {
     test('insert-super', 'insert-super-test');
+
+    test('insert-super', 'insert-super-test2', {
+      'mixin': true,
+    });
   });
 
   it('transforms the "rm merge" tests correctly', () => {

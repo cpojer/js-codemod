@@ -138,6 +138,16 @@ function insertSuper(file, api, options) {
     return false;
   };
 
+  const hasMixinAsSuperClass = path => (
+    !options.mixin ||
+    (
+      path.value.superClass.type == 'CallExpression' &&
+      path.value.superClass.callee &&
+      path.value.superClass.callee.type == 'Identifier' &&
+      path.value.superClass.callee.name == 'mixin'
+    )
+  );
+
   const addSuperCall = path =>
     getConstructor(path).value.body.body.unshift(
       j.expressionStatement(
@@ -154,6 +164,7 @@ function insertSuper(file, api, options) {
     .filter(hasConstructor)
     .forEach(fixSuperCalls)
     .filter(needsSuperCall)
+    .filter(hasMixinAsSuperClass)
     .forEach(addSuperCall)
     .size() > 0;
 

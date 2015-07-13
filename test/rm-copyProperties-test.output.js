@@ -2,4 +2,7 @@
 
 Object.assign(a, {a: 1});
 
-Object.assign({a: 1}, {b: 1});
+({
+  a: 1,
+  b: 1
+});
