@@ -115,7 +115,7 @@ function insertSuper(file, api, options) {
         // only referred to lazily, because yes, this is something people do.
         has = !hasLazyThisExpressions(thisExpressions);
       }
-      return has || findSuperCall(j(expression));
+      return has || findSuperCall(j(expression)).size() > 0;
     });
     return has;
   };

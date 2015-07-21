@@ -78,3 +78,13 @@ class J extends A {
   }
 
 }
+
+class K extends A {
+
+  constructor() {
+    var x = {};
+    this.foo = 'bar';
+    super();
+  }
+
+}
