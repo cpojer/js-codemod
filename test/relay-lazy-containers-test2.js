@@ -1,7 +1,3 @@
-/*
- * @providesModule Hi
- */
-
 'use strict';
 
 var React = require('React');
