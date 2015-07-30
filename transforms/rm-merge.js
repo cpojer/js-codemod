@@ -1,6 +1,4 @@
-// -----------------------------------------------------------------------------
-// Get rid of `merge`
-function rmMerge(file, api, options) {
+module.exports = (file, api, options) => {
   const j = api.jscodeshift;
 
   const {getRequireCall, removeRequire} = require('./utils/require')(j);
@@ -30,5 +28,3 @@ function rmMerge(file, api, options) {
   }
   return null;
 }
-
-module.exports = rmMerge;

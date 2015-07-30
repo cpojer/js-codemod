@@ -1,6 +1,4 @@
-// -----------------------------------------------------------------------------
-// Update functions to arrow functions
-function arrowFunction(file, api, options) {
+module.exports = (file, api, options) => {
   const j = api.jscodeshift;
 
   const printOptions = options.printOptions || {quote: 'single'};
@@ -58,5 +56,3 @@ function arrowFunction(file, api, options) {
 
   return didTransform ? root.toSource(printOptions) + '\n' : null;
 }
-
-module.exports = arrowFunction;

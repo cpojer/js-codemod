@@ -1,6 +1,4 @@
-// -----------------------------------------------------------------------------
-// Get rid of `copyProperties`
-function rmCopyProperties(file, api, options) {
+module.exports = (file, api, options) => {
   if (!options.filters) {
     options.filters = [];
   }
@@ -169,5 +167,3 @@ function rmCopyProperties(file, api, options) {
   }
   return null;
 }
-
-module.exports = rmCopyProperties;

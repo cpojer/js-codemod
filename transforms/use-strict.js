@@ -1,4 +1,4 @@
-function addUseStrict(file, api, options) {
+module.exports = (file, api, options) => {
   const j = api.jscodeshift;
 
   const hasStrictMode = body =>
@@ -35,5 +35,3 @@ function addUseStrict(file, api, options) {
 
   return root.toSource(options.printOptions || {quote: 'single'});
 };
-
-module.exports = addUseStrict;
