@@ -1,5 +1,3 @@
-// Merge
-
 Object.assign(a, {a: 1});
 
 ({

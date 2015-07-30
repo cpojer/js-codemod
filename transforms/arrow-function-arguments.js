@@ -9,18 +9,12 @@ function arrowFunctionArguments(file, api, options) {
   const ARGUMENTS = 'arguments';
   const ARGS = 'args';
 
-  const createArrowFunctionExpression = (fn, args) => {
-    const arrow = j.arrowFunctionExpression(
-      (fn.params || []).concat(
-        // https://github.com/benjamn/recast/pull/179
-        // j.spreadElementPattern(args)
-      ),
+  const createArrowFunctionExpression = (fn, args) =>
+    j.arrowFunctionExpression(
+      (fn.params || []).concat(j.restElement(args)),
       fn.body,
       fn.generator
     );
-    arrow.rest = args;
-    return arrow;
-  };
 
   const filterArrowFunctions = path => {
     while (path.parent) {
@@ -58,14 +52,19 @@ function arrowFunctionArguments(file, api, options) {
 
     const {value: fn} = afPath;
     const {params} = fn;
-    const args = fn.rest || j.identifier(ARGS);
+    const param = params[params.length - 1];
+    var args;
+    if (param && param.type == 'RestElement') {
+      params.pop();
+      args = param.argument;
+    } else {
+      args = j.identifier(ARGS);
+    }
     j(afPath).replaceWith(createArrowFunctionExpression(fn, args));
 
     if (params.length) {
       j(path).replaceWith(
-        j.arrayExpression(params.concat(
-          j.spreadElement(args)
-        ))
+        j.arrayExpression(params.concat(j.spreadElement(args)))
       );
     } else {
       j(path).replaceWith(args);

@@ -1,5 +1,3 @@
-// Merge
-
 var copyProperties = require('copyProperties');
 
 Object.assign(a, {a: 1});

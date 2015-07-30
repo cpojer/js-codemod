@@ -40,8 +40,6 @@ describe('Transform Tests', () => {
         quote: 'single'
       }
     });
-
-    test('use-strict', 'use-strict-test2');
   });
 
   it('transforms the "arrow function" tests correctly', () => {
@@ -50,14 +48,6 @@ describe('Transform Tests', () => {
     });
 
     test('arrow-function', 'arrow-function-test2');
-  });
-
-  it('transforms the "insert super" tests correctly', () => {
-    test('insert-super', 'insert-super-test');
-
-    test('insert-super', 'insert-super-test2', {
-      'mixin': true,
-    });
   });
 
   it('transforms the "rm merge" tests correctly', () => {

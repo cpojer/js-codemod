@@ -1,5 +1,3 @@
-// Merge
-
 var merge = require('merge');
 
 var x = merge(a);

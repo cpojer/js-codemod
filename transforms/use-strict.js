@@ -29,7 +29,7 @@ function addUseStrict(file, api, options) {
     return null;
   }
 
-  body.unshift(withComments(createUseStrictExpression(), body[0].comments));
+  body.unshift(withComments(createUseStrictExpression(), body[0]));
   body[0].comments = body[1].comments;
   delete body[1].comments;
 

@@ -1,12 +1,13 @@
 ## js-codemod
 
-This repository contains a collection of codemod scripts based on
+This repository contains a collection of codemod scripts for use with
 [JSCodeshift](https://github.com/facebook/jscodeshift).
 
 ### Setup & Run
 
-  * `npm install -g js-codemod`
-  * `js-codemod <codemod-script> <file>`
+  * `npm install -g jscodeshift`
+  * `git clone https://github.com/cpojer/js-codemod.git`
+  * `jscodeshift -t <codemod-script> <file>`
   * Use the `-d` option for a dry-run and use `-p` to print the output
     for comparison
 
@@ -14,11 +15,11 @@ This repository contains a collection of codemod scripts based on
 
 `use-strict` adds a top-level `'use strict'` statement to JavaScript files
 
-  * `js-codemod use-strict <file>`
+  * `jscodeshift -t js-codemod/transforms/use-strict.js <file>`
 
 `arrow-function` transforms functions to arrow functions
 
-  * `js-codemod arrow-function <file>`
+  * `jscodeshift -t js-codemod/transforms/arrow-function.js <file>`
 
 It will transform `function() { }.bind(this)` calls to `() => {}`. If the only
 statement in the body is a `ReturnStatement` it will remove the curly braces.
@@ -33,4 +34,4 @@ can specify the `--inline-single-expressions=true` option and it will transform
 Options to [recast](https://github.com/benjamn/recast)'s printer can be provided
 through the `printOptions` command line argument
 
- * `js-codemod use-strict <file> --printOptions='{"quote":"double"}'`
+ * `jscodeshift -t transform.js <file> --printOptions='{"quote":"double"}'`
