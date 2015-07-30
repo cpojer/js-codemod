@@ -64,4 +64,8 @@ describe('Transform Tests', () => {
     test('arrow-function-arguments', 'arrow-function-arguments-test');
   });
 
+  it('transforms the "touchable" tests correctly', () => {
+    test('touchable', 'touchable-test');
+  });
+
 });
