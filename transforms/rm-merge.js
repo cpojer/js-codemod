@@ -1,7 +1,12 @@
 module.exports = (file, api, options) => {
   const j = api.jscodeshift;
 
-  const {getRequireCall, removeRequire} = require('./utils/require')(j);
+  const getRequireCall = (path, moduleName) => {
+    const call = path
+      .findVariableDeclarators()
+      .filter(j.filters.VariableDeclarator.requiresModule(moduleName));
+    return call.size() == 1 ? call.get() : null;
+  };
 
   const printOptions = options.printOptions || {quote: 'single'};
   const root = j(file.source);
@@ -22,7 +27,7 @@ module.exports = (file, api, options) => {
       .forEach(rmMergeCalls)
       .size() > 0;
     if (didTransform) {
-      removeRequire(declarator);
+      j(declarator).remove();
       return root.toSource(printOptions);
     }
   }
