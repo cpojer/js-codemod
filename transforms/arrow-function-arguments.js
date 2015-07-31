@@ -75,5 +75,5 @@ module.exports = (file, api, options) => {
     .forEach(updateArgumentsCalls)
     .size() > 0;
 
-  return didTransform ? root.toSource(printOptions) + '\n' : null;
+  return didTransform ? root.toSource(printOptions) : null;
 }

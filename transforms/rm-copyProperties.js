@@ -162,7 +162,7 @@ module.exports = (file, api, options) => {
       if (!root.find(j.CallExpression, {callee: {name: variableName}}).size()) {
         removeRequire(declarator);
       }
-      return root.toSource(printOptions) + '\n';
+      return root.toSource(printOptions);
     }
   }
   return null;

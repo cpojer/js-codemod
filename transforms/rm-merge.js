@@ -23,7 +23,7 @@ module.exports = (file, api, options) => {
       .size() > 0;
     if (didTransform) {
       removeRequire(declarator);
-      return root.toSource(printOptions) + '\n';
+      return root.toSource(printOptions);
     }
   }
   return null;

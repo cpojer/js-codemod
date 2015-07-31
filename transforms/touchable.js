@@ -33,5 +33,5 @@ module.exports = function(file, api) {
     didTransform = true;
   });
 
-  return didTransform ? root.toSource() + '\n' : null;
+  return didTransform ? root.toSource() : null;
 };
