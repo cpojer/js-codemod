@@ -64,11 +64,18 @@ module.exports = function(file, api) {
   const j = api.jscodeshift;
   const {expression, statement, statements} = j.template;
 
-  return j(file.source)
+  const root = j(file.source);
+  const didTransform = root
     .find(j.MemberExpression, {computed: true, property: {type: 'Literal'}})
     .filter(p => !!keywords[p.value.property.value])
     .replaceWith(
-      p => j.memberExpression(p.value.object, j.identifier(p.value.property.value), false)
+      p => j.memberExpression(
+        p.value.object,
+        j.identifier(p.value.property.value),
+        false
+      )
     )
-    .toSource();
+    .size();
+
+  return didTransform ? root.toSource() : null;
 };
