@@ -44,3 +44,11 @@ do {
   console.log(a, b);
 } while (z--);
 
+() => {
+  let a = 1;
+
+  return () => {
+    return _ = _ => _ => _ => _ => _ => { a = 7; };
+  }()
+}();
+
