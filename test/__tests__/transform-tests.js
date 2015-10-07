@@ -68,4 +68,9 @@ describe('Transform Tests', () => {
     test('touchable', 'touchable-test');
   });
 
+  it('transforms the "no-vars" tests correctly', () => {
+    test('no-vars', 'no-vars-test');
+  });
+
+
 });
