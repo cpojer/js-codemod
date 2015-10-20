@@ -49,8 +49,6 @@ module.exports = function(file, api) {
     .find(j.VariableDeclaration)
     .filter(
       p => {
-        if (p.value.kind !== 'var') return false;
-
         if (
           'ForStatement' === p.parent.value.type ||
           'ForInStatement' === p.parent.value.type ||
@@ -60,7 +58,12 @@ module.exports = function(file, api) {
           p.value.kind = 'let';
           return true;
         } else {
-          p.value.kind = 'const';
+          if (p.value.declarations.every(decl => decl.init)) {
+            p.value.kind = 'const';
+          } else {
+            p.value.kind = 'let';
+          }
+
           return true;
         }
       }

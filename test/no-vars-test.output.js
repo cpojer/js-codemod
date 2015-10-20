@@ -7,6 +7,7 @@ for (let i = 0; i < 10; i++) {
 for (let i = 0; i < 10; i++) {
 }
 
+let letItBe;
 let shouldBeLet = 0;
 const shouldBeConst = 0;
 

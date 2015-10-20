@@ -7,6 +7,7 @@ for (var i = 0; i < 10; i++) {
 for (i = 0; i < 10; i++) {
 }
 
+var letItBe;
 var shouldBeLet = 0;
 var shouldBeConst = 0;
 
