@@ -29,7 +29,7 @@ module.exports = function(file, api) {
    * @param {ASTNode} [declarator] VariableDeclarator node
    * @return {Boolean}
    */
-  var isMutated = (node, declarator) => {
+  const isMutated = (node, declarator) => {
     const scopeNode = node.parent;
 
     const hasAssignmentMutation = j(scopeNode)
