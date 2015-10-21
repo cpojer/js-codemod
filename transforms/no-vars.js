@@ -36,14 +36,24 @@ module.exports = function(file, api) {
       .find(j.AssignmentExpression)
       .filter(n => {
         if (declarator) {
-          if (
-            declarator.id.type === 'ObjectPattern' ||
-            declarator.id.type === 'ArrayPattern'
-          ) {
+          if (declarator.id.type === 'ObjectPattern') {
             return declarator.id.properties.some(d => d.value.name === n.value.left.name);
+          } else if (declarator.id.type === 'ArrayPattern') {
+            return declarator.id.elements.some(d =>
+              (d.type === 'RestElement' ? d.argument.name : d.name) === n.value.left.name
+            );
+          }
+
+          if (n.value.left.type === 'ObjectPattern') {
+            return n.value.left.properties.some(p => p.key.name === declarator.id.name);
+          } else if (n.value.left.type === 'ArrayPattern') {
+            return n.value.left.elements.some(e =>
+              (e.type === 'RestElement' ? e.argument.name : e.name) === declarator.id.name
+            );
           }
           return declarator.id.name === n.value.left.name;
         }
+
         if (node.value.declarations.some(d => d.id.name === n.value.left.name)) {
           return true;
         }
@@ -53,12 +63,14 @@ module.exports = function(file, api) {
       .find(j.UpdateExpression)
       .filter(n => {
         if (declarator) {
-          if (
-            declarator.id.type === 'ObjectPattern' ||
-            declarator.id.type === 'ArrayPattern'
-          ) {
+          if (declarator.id.type === 'ObjectPattern') {
             return declarator.id.properties.some(d => d.value.name === n.value.argument.name);
+          } else if (declarator.id.type === 'ArrayPattern') {
+            return declarator.id.elements.some(
+              (e.type === 'RestElement' ? e.argument.name : e.name) === n.value.argument.name
+            ;)
           }
+
           return declarator.id.name === n.value.argument.name;
         }
 
