@@ -20,26 +20,42 @@ module.exports = function(file, api) {
   const j = api.jscodeshift;
   const {expression} = j.template;
 
-  // a quick and likely incomplete check if a variable has been mutated within
-  // a variables direct parent scope
-  var isMutated = (node) => {
-    const hasAssignmentMutation = j(node.parent)
+  /**
+   * isMutated utility function to determine whether a VariableDeclaration
+   * contains mutations. Takes an optional VariableDeclarator node argument to
+   * return only whether that specific Identifier is mutated
+   *
+   * @param {ASTPath} node VariableDeclaration path
+   * @param {ASTNode} [declarator] VariableDeclarator node
+   * @return {Boolean}
+   */
+  var isMutated = (node, declarator) => {
+    const scopeNode = node.parent;
+
+    const hasAssignmentMutation = j(scopeNode)
       .find(j.AssignmentExpression)
       .filter(n => {
+        if (declarator) {
+          return declarator.id.name === n.value.left.name;
+        }
         if (node.value.declarations.some(d => d.id.name === n.value.left.name)) {
           return true;
         }
       }).size() > 0;
 
-    const hasUpdateMutation = j(node.parent)
+    const hasUpdateMutation = j(scopeNode)
       .find(j.UpdateExpression)
       .filter(n => {
+        if (declarator) {
+          return declarator.id.name === n.value.argument.name;
+        }
+
         if (node.value.declarations.some(d => d.id.name === n.value.argument.name)) {
           return true;
         }
       }).size() > 0;
 
-    return hasAssignmentMutation || hasUpdateMutation;
+    return hasAssignmentMutation || hasUpdateMutation
   }
 
   let root = j(file.source)
@@ -52,24 +68,35 @@ module.exports = function(file, api) {
         if (
           'ForStatement' === p.parent.value.type ||
           'ForInStatement' === p.parent.value.type ||
-          'ForOfStatement' === p.parent.value.type ||
-          isMutated(p)
+          'ForOfStatement' === p.parent.value.type
         ) {
           p.value.kind = 'let';
           return true;
         } else {
-          if (p.value.declarations.every(decl => decl.init)) {
-            p.value.kind = 'const';
-          } else {
-            p.value.kind = 'let';
-          }
+          const lets = [], consts = [];
+          p.value.declarations.forEach(decl => {
+            if (!decl.init || isMutated(p, decl)) {
+              lets.push(decl)
+            } else {
+              consts.push(decl);
+            }
+          });
+          let replaceWith = []
+          if (lets.length) replaceWith.push(j.variableDeclaration('let', lets));
+          if (consts.length) replaceWith.push(j.variableDeclaration('const', consts));
 
-          return true;
+          if (replaceWith.length) {
+            j(p).replaceWith(replaceWith);
+            return true;
+          }
+          else {
+            return false;
+          }
         }
       }
     ).size() > 0;
 
-  // if a iterator statement attempts to reuse a loose iterator variable 
+  // if a iterator statement attempts to reuse a loose iterator variable
   // change it to a let declaration
   let changedStatement = root
     .find(j.Statement)
@@ -82,9 +109,10 @@ module.exports = function(file, api) {
       stmt.value.init && stmt.value.init.type === 'AssignmentExpression'
     ))
     .forEach(p => {
-      p.value.init = j.variableDeclaration('let', [
-        j.variableDeclarator(p.value.init.left, p.value.init.right)
-      ]);
+      p.value.init = j.variableDeclaration(
+        p.value.type === 'ForStatement' || isMutated(p.value) ? 'let' : 'const',
+        [j.variableDeclarator(p.value.init.left, p.value.init.right)]
+      );
     }).size() > 0;
 
   if (changedVariableDeclaration || changedStatement) {
