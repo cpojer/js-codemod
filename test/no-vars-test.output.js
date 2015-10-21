@@ -62,3 +62,19 @@ do {
   return b + a;
 }();
 
+() => {
+  for (var i = 0, z = 77; i < 10; i++) {
+    setTimeout(() => console.log(i))
+  }
+
+  for (var j = 0; j < 10; j++) {
+    _.defer(function () {
+      console.log(j)
+    });
+  }
+
+  for (let k = 0; k < 10; k++) {
+    console.log(i);
+  }
+}();
+

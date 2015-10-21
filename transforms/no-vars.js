@@ -58,6 +58,27 @@ module.exports = function(file, api) {
     return hasAssignmentMutation || hasUpdateMutation
   }
 
+  const isAccessedInClosure = (node) => {
+
+    return j(node.value.body)
+      .find(j.Identifier)
+      .filter(n => {
+        const declarations = node.value.init ? node.value.init.declarations
+                           : node.value.left ? node.value.left.declarations
+                           : [];
+        if (declarations.some(d => d.id.name === n.value.name)) {
+          let parent = n.parent;
+          while (parent.value !== node.value.body) {
+            parent = parent.parent;
+            if (/Function/.test(parent.value.type)) {
+              return true;
+            }
+          }
+          return false;
+        }
+      }).size() > 0;
+  }
+
   let root = j(file.source)
 
   // convert all necessary variable declarations to let or const
@@ -70,7 +91,9 @@ module.exports = function(file, api) {
           'ForInStatement' === p.parent.value.type ||
           'ForOfStatement' === p.parent.value.type
         ) {
-          p.value.kind = 'let';
+          if (!isAccessedInClosure(p.parent)) {
+            p.value.kind = 'let';
+          }
           return true;
         } else {
           const lets = [], consts = [];
