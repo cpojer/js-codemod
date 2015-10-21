@@ -77,3 +77,9 @@ do {
   }
 }();
 
+() => {
+  var {foo, number} = bar;
+  foo = xy;
+  number++;
+}
+

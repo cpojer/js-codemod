@@ -36,6 +36,12 @@ module.exports = function(file, api) {
       .find(j.AssignmentExpression)
       .filter(n => {
         if (declarator) {
+          if (
+            declarator.id.type === 'ObjectPattern' ||
+            declarator.id.type === 'ArrayPattern'
+          ) {
+            return declarator.id.properties.some(d => d.value.name === n.value.left.name);
+          }
           return declarator.id.name === n.value.left.name;
         }
         if (node.value.declarations.some(d => d.id.name === n.value.left.name)) {
@@ -47,6 +53,12 @@ module.exports = function(file, api) {
       .find(j.UpdateExpression)
       .filter(n => {
         if (declarator) {
+          if (
+            declarator.id.type === 'ObjectPattern' ||
+            declarator.id.type === 'ArrayPattern'
+          ) {
+            return declarator.id.properties.some(d => d.value.name === n.value.argument.name);
+          }
           return declarator.id.name === n.value.argument.name;
         }
 
