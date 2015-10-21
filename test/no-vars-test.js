@@ -81,5 +81,13 @@ do {
   var {foo, number} = bar;
   foo = xy;
   number++;
-}
+}();
+
+() => {
+  // should not destroy comments
+  var querySet = {};
+  if (true) {
+    ({querySet} = someComputation());
+  }
+}();
 

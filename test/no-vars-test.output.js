@@ -78,3 +78,17 @@ do {
   }
 }();
 
+() => {
+  let {foo, number} = bar;
+  foo = xy;
+  number++;
+}();
+
+() => {
+  // should not destroy comments
+  let querySet = {};
+  if (true) {
+    ({querySet} = someComputation());
+  }
+}();
+

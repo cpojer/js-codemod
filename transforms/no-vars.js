@@ -116,11 +116,16 @@ module.exports = function(file, api) {
               consts.push(decl);
             }
           });
+
           let replaceWith = []
           if (lets.length) replaceWith.push(j.variableDeclaration('let', lets));
           if (consts.length) replaceWith.push(j.variableDeclaration('const', consts));
 
           if (replaceWith.length) {
+            if (p.value.comments || p.value.leadingComments) {
+              replaceWith[0].leadingComments = p.value.leadingComments;
+              replaceWith[0].comments = p.value.comments;
+            }
             j(p).replaceWith(replaceWith);
             return true;
           }
