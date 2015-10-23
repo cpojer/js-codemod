@@ -75,6 +75,11 @@ do {
   for (var k = 0; k < 10; k++) {
     console.log(i);
   }
+
+  // I should be left alone
+  for (let z = 0; z < 10; z++) {
+    setTimeout(() => console.log(z));
+  }
 }();
 
 () => {

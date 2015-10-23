@@ -68,7 +68,7 @@ module.exports = function(file, api) {
           } else if (declarator.id.type === 'ArrayPattern') {
             return declarator.id.elements.some(
               (e.type === 'RestElement' ? e.argument.name : e.name) === n.value.argument.name
-            ;)
+            );
           }
 
           return declarator.id.name === n.value.argument.name;
@@ -115,12 +115,26 @@ module.exports = function(file, api) {
           'ForInStatement' === p.parent.value.type ||
           'ForOfStatement' === p.parent.value.type
         ) {
+          if (p.value.kind !== 'var') {
+            return;
+          }
+
           if (!isAccessedInClosure(p.parent)) {
             p.value.kind = 'let';
+          } else {
+            console.warn(
+              'WARNING: A variable binding in a `for` loop is accessed '+
+              'inside a new scope. This could be indicative of a race ' +
+              'condition or other unintended access. We have left the ' +
+              'binding as a `var`. View the following code at `%s#%s`',
+              file.path, p.value.loc.start.line
+            );
+            console.log(j(p.parent).toSource() + '\n');
           }
           return true;
         } else {
-          const lets = [], consts = [];
+          const lets = [];
+          const consts = [];
           p.value.declarations.forEach(decl => {
             if (!decl.init || isMutated(p, decl)) {
               lets.push(decl)
