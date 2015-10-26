@@ -94,7 +94,13 @@ module.exports = function(file, api) {
           let parent = n.parent;
           while (parent.value !== node.value.body) {
             parent = parent.parent;
-            if (/Function/.test(parent.value.type)) {
+            let {type} = parent.value;
+            if (
+              'Function' === type ||
+              'FunctionDeclaration' === type ||
+              'FunctionExpression' === type ||
+              'ArrowFunctionExpression' === type
+            ) {
               return true;
             }
           }
