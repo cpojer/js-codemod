@@ -7,6 +7,7 @@ for (let i = 0; i < 10; i++) {
 for (let i = 0; i < 10; i++) {
 }
 
+let letItBe;
 let shouldBeLet = 0;
 const shouldBeConst = 0;
 
@@ -50,5 +51,49 @@ do {
   return () => {
     return _ = _ => _ => _ => _ => _ => { a = 7; };
   }()
+}();
+
+() => {
+  let a = 1;
+  const b = 2, c = 3;
+
+  a++;
+
+  return b + a;
+}();
+
+() => {
+  for (var i = 0, z = 77; i < 10; i++) {
+    setTimeout(() => console.log(i))
+  }
+
+  for (var j = 0; j < 10; j++) {
+    _.defer(function () {
+      console.log(j)
+    });
+  }
+
+  for (let k = 0; k < 10; k++) {
+    console.log(i);
+  }
+
+  // I should be left alone
+  for (let z = 0; z < 10; z++) {
+    setTimeout(() => console.log(z));
+  }
+}();
+
+() => {
+  let {foo, number} = bar;
+  foo = xy;
+  number++;
+}();
+
+() => {
+  // should not destroy comments
+  let querySet = {};
+  if (true) {
+    ({querySet} = someComputation());
+  }
 }();
 
