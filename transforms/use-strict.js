@@ -23,8 +23,7 @@ module.exports = (file, api, options) => {
     );
 
   const root = j(file.source);
-  const body = root.get().value.body;
-
+  const body = root.get().value.program.body;
   if (!body.length || hasStrictMode(body)) {
     return null;
   }

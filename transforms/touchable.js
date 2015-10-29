@@ -27,8 +27,7 @@ module.exports = function(file, api) {
         getJSXName(child) === 'View')) {
       return;
     }
-
-    parent.attributes.push(...child.attributes);
+    parent.openingElement.attributes.push(...child.openingElement.attributes);
     parent.children = child.children;
     didTransform = true;
   });
