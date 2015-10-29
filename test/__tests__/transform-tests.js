@@ -78,5 +78,10 @@ describe('Transform Tests', () => {
     test('no-vars', 'no-vars-test');
   });
 
+  it('transforms the "jest-update" tests correctly', () => {
+    test('jest-update', 'jest-update-test', null, {
+      path: '/__tests__/jest-test.js',
+    });
+  });
 
 });
