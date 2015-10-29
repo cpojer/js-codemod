@@ -32,9 +32,9 @@ function test(transformName, testFileName, options, fakeOptions) {
   }
 
   expect(
-    (transform({path, source}, {jscodeshift}, options || {}) || '')
+    (transform({path, source}, {jscodeshift}, options || {}) || '').trim()
   ).toEqual(
-    output
+    output.trim()
   );
 }
 

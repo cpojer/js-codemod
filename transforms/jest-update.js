@@ -27,11 +27,12 @@ module.exports = function(file, api, options = {}) {
 
   const MOCK_MODULES_API = {
     dontMock: 'dontMock',
+    setMock: 'setMock',
     mock: 'mock',
     autoMockOff: 'autoMockOff',
     autoMockOn: 'autoMockOn',
     dumpCache: 'resetModuleRegistry',
-    generateMock: 'generateMock',
+    generateMock: 'genMockFromModule',
   };
 
   const MOCKS_API = {
@@ -64,16 +65,23 @@ module.exports = function(file, api, options = {}) {
           },
         },
       })
-      .replaceWith(
-        p => j.callExpression(
+      .replaceWith(p => {
+        const name = p.value.callee.property.name;
+        if (apiMethods[name] == name) {
+          // short-circuit to keep code style in-tact
+          p.value.callee.object = j.identifier('jest');
+          return p.value;
+        }
+
+        return j.callExpression(
           j.memberExpression(
             j.identifier('jest'),
-            j.identifier(apiMethods[p.value.callee.property.name]),
+            j.identifier(apiMethods[name]),
             false
           ),
           p.value.arguments
-        )
-      )
+        );
+      })
       .size();
 
   const removeRequireCall = name => {
@@ -88,14 +96,25 @@ module.exports = function(file, api, options = {}) {
       }
     }
 
-    root.find(j.CallExpression, {callee: {name}})
-      .remove();
+    mutations += root
+      .find(j.CallExpression, {
+        callee: {
+          name: 'require',
+        },
+        arguments: [{value: name}],
+      })
+      .filter(p => p.parent.value.type == 'ExpressionStatement')
+      .remove()
+      .size();
   };
 
+  const firstNode = () => root.find(j.Program).get('body', 0);
+  const comment = firstNode().node.leadingComments;
   updateAPIs(moduleMatcher('mock-modules'), MOCK_MODULES_API);
   updateAPIs(moduleMatcher('mocks'), MOCKS_API);
   removeRequireCall('mock-modules');
   removeRequireCall('mocks');
+  firstNode().node.comments = comment;
 
   return mutations ? root.toSource(printOptions) : null;
 };

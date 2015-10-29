@@ -1,5 +1,4 @@
-require('mocks');
-
+// Comment
 jest.dontMock('Foo').dontMock('Foo1');
 
 jest.resetModuleRegistry();
@@ -12,8 +11,12 @@ jest.genMockFn();
 
 require('mock-modules').doSomethingCrazy();
 
-jest.generateMock();
+jest.genMockFromModule();
 
 jest.mock('foo').dontMock('bar')
 
 jest.dontMock('foo');
+
+jest
+  .dontMock()
+  .dontMock();
