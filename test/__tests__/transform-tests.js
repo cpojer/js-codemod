@@ -12,23 +12,29 @@
 
 jest.autoMockOff();
 
-var fs = require('fs');
-var jscodeshift = require('jscodeshift');
+const fs = require('fs');
+const jscodeshift = require('jscodeshift');
 
 function read(fileName) {
   return fs.readFileSync(__dirname + '/../' + fileName, 'utf8');
 }
 
-function test(transformName, testFileName, options) {
-  var path = testFileName + '.js';
-  var source = read(testFileName + '.js');
-  var output = read(testFileName + '.output.js');
+function test(transformName, testFileName, options, fakeOptions) {
+  let path = testFileName + '.js';
+  const source = read(testFileName + '.js');
+  const output = read(testFileName + '.output.js');
+  const transform = require('../../transforms/' + transformName);
 
-  var transform = require('../../transforms/' + transformName);
+  if (fakeOptions) {
+    if (fakeOptions.path) {
+      path = fakeOptions.path;
+    }
+  }
+
   expect(
-    (transform({path, source}, {jscodeshift}, options || {}) || '').trim()
+    (transform({path, source}, {jscodeshift}, options || {}) || '')
   ).toEqual(
-    output.trim()
+    output
   );
 }
 

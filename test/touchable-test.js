@@ -1,4 +1,3 @@
-
 (<TouchableBounce onPress={function() {}}>
   <View style={{color: 'red'}} />
 </TouchableBounce>)
