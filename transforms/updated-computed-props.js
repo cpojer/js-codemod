@@ -62,8 +62,6 @@ const keywords = {
 
 module.exports = function(file, api) {
   const j = api.jscodeshift;
-  const {expression, statement, statements} = j.template;
-
   const root = j(file.source);
   const didTransform = root
     .find(j.MemberExpression, {computed: true, property: {type: 'Literal'}})

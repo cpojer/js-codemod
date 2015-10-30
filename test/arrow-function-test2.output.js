@@ -1,3 +1,4 @@
+/* eslint-disable no-extra-bind */
 'use strict';
 
 var fn1 = () => {

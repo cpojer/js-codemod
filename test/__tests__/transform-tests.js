@@ -8,62 +8,45 @@
  *
  */
 
-"use strict";
+'use strict';
 
-jest.autoMockOff();
-
-const fs = require('fs');
-const jscodeshift = require('jscodeshift');
-
-function read(fileName) {
-  return fs.readFileSync(__dirname + '/../' + fileName, 'utf8');
-}
-
-function test(transformName, testFileName, options, fakeOptions) {
-  let path = testFileName + '.js';
-  const source = read(testFileName + '.js');
-  const output = read(testFileName + '.output.js');
-  const transform = require('../../transforms/' + transformName);
-
-  if (fakeOptions) {
-    if (fakeOptions.path) {
-      path = fakeOptions.path;
-    }
-  }
-
-  expect(
-    (transform({path, source}, {jscodeshift}, options || {}) || '').trim()
-  ).toEqual(
-    output.trim()
-  );
-}
+const printOptions = {
+  trailingComma: true,
+};
 
 describe('Transform Tests', () => {
 
   it('transforms the "use strict" tests correctly', () => {
     test('use-strict', 'use-strict-test', {
       printOptions: {
-        quote: 'single'
-      }
+        quote: 'single',
+      },
     });
   });
 
   it('transforms the "arrow function" tests correctly', () => {
     test('arrow-function', 'arrow-function-test', {
-      'inline-single-expressions': true
+      'inline-single-expressions': true,
+      printOptions,
     });
 
     test('arrow-function', 'arrow-function-test2');
   });
 
   it('transforms the "rm merge" tests correctly', () => {
-    test('rm-merge', 'rm-merge-test');
+    test('rm-merge', 'rm-merge-test', {
+      printOptions,
+    });
   });
 
   it('transforms the "rm copyProperties" tests correctly', () => {
-    test('rm-copyProperties', 'rm-copyProperties-test');
+    test('rm-copyProperties', 'rm-copyProperties-test', {
+      printOptions,
+    });
 
-    test('rm-copyProperties', 'rm-copyProperties-test2');
+    test('rm-copyProperties', 'rm-copyProperties-test2', {
+      printOptions,
+    });
   });
 
   it('transforms the "arrow function arguments" tests correctly', () => {
@@ -75,7 +58,9 @@ describe('Transform Tests', () => {
   });
 
   it('transforms the "no-vars" tests correctly', () => {
-    test('no-vars', 'no-vars-test');
+    test('no-vars', 'no-vars-test', {
+      printOptions,
+    });
   });
 
   it('transforms the "jest-update" tests correctly', () => {

@@ -1,4 +1,4 @@
-/** 
+/**
  * Transform all your `var`s to `let` and `const`.
  *
  * Does not yet manage things that abuse variable hoisting rules. E.g. current
@@ -18,7 +18,6 @@
 
 module.exports = function(file, api) {
   const j = api.jscodeshift;
-  const {expression} = j.template;
 
   /**
    * isMutated utility function to determine whether a VariableDeclaration
@@ -67,7 +66,7 @@ module.exports = function(file, api) {
             return declarator.id.properties.some(d => d.value.name === n.value.argument.name);
           } else if (declarator.id.type === 'ArrayPattern') {
             return declarator.id.elements.some(
-              (e.type === 'RestElement' ? e.argument.name : e.name) === n.value.argument.name
+              e => (e.type === 'RestElement' ? e.argument.name : e.name) === n.value.argument.name
             );
           }
 
@@ -79,8 +78,8 @@ module.exports = function(file, api) {
         }
       }).size() > 0;
 
-    return hasAssignmentMutation || hasUpdateMutation
-  }
+    return hasAssignmentMutation || hasUpdateMutation;
+  };
 
   const isAccessedInClosure = (node) => {
 
@@ -94,7 +93,7 @@ module.exports = function(file, api) {
           let parent = n.parent;
           while (parent.value !== node.value.body) {
             parent = parent.parent;
-            let {type} = parent.value;
+            const {type} = parent.value;
             if (
               'Function' === type ||
               'FunctionDeclaration' === type ||
@@ -107,12 +106,12 @@ module.exports = function(file, api) {
           return false;
         }
       }).size() > 0;
-  }
+  };
 
-  let root = j(file.source)
+  const root = j(file.source);
 
   // convert all necessary variable declarations to let or const
-  let changedVariableDeclaration = root
+  const changedVariableDeclaration = root
     .find(j.VariableDeclaration)
     .filter(
       p => {
@@ -122,7 +121,7 @@ module.exports = function(file, api) {
           'ForOfStatement' === p.parent.value.type
         ) {
           if (p.value.kind !== 'var') {
-            return;
+            return false;
           }
 
           if (!isAccessedInClosure(p.parent)) {
@@ -143,15 +142,19 @@ module.exports = function(file, api) {
           const consts = [];
           p.value.declarations.forEach(decl => {
             if (!decl.init || isMutated(p, decl)) {
-              lets.push(decl)
+              lets.push(decl);
             } else {
               consts.push(decl);
             }
           });
 
-          let replaceWith = []
-          if (lets.length) replaceWith.push(j.variableDeclaration('let', lets));
-          if (consts.length) replaceWith.push(j.variableDeclaration('const', consts));
+          const replaceWith = [];
+          if (lets.length) {
+            replaceWith.push(j.variableDeclaration('let', lets));
+          }
+          if (consts.length) {
+            replaceWith.push(j.variableDeclaration('const', consts));
+          }
 
           if (replaceWith.length) {
             if (p.value.comments || p.value.leadingComments) {
@@ -160,8 +163,7 @@ module.exports = function(file, api) {
             }
             j(p).replaceWith(replaceWith);
             return true;
-          }
-          else {
+          } else {
             return false;
           }
         }
@@ -170,7 +172,7 @@ module.exports = function(file, api) {
 
   // if a iterator statement attempts to reuse a loose iterator variable
   // change it to a let declaration
-  let changedStatement = root
+  const changedStatement = root
     .find(j.Statement)
     .filter(exp => (
       'ForStatement' === exp.value.type ||
@@ -190,4 +192,6 @@ module.exports = function(file, api) {
   if (changedVariableDeclaration || changedStatement) {
     return root.toSource();
   }
+
+  return null;
 };

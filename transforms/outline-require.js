@@ -1,16 +1,15 @@
 module.exports = function(file, api) {
   if (file.path.indexOf('/__tests__/') == -1) {
-    return;
+    return null;
   }
 
   const REQUIRE_CALL = {
     type: 'CallExpression',
     callee: {
-      name: 'require'
-    }
+      name: 'require',
+    },
   };
   const j = api.jscodeshift;
-  const {expression, statement, statements} = j.template;
 
   const root = j(file.source);
   const {program} = root.get().value;
@@ -85,7 +84,7 @@ module.exports = function(file, api) {
   const findInsertionPoint = body => {
     var index = 0;
     for (let i = 0; i < body.length; i++) {
-      let item = body[i];
+      const item = body[i];
       if (
         isJestCall(item) ||
         isMockModule(item) ||
@@ -181,9 +180,9 @@ module.exports = function(file, api) {
   root
     .find(j.CallExpression, {
       callee: {
-        name: 'beforeEach'
+        name: 'beforeEach',
       },
-      arguments: [{body: []}]
+      arguments: [{body: []}],
     })
     .filter(p => !p.value.arguments[0].body.body.length)
     .remove();

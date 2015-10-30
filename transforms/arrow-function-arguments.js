@@ -76,4 +76,4 @@ module.exports = (file, api, options) => {
     .size() > 0;
 
   return didTransform ? root.toSource(printOptions) : null;
-}
+};

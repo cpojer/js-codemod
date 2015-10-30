@@ -20,7 +20,7 @@ module.exports = (file, api, options) => {
       }
     }
     return fn.body;
-  }
+  };
 
   const createArrowFunctionExpression = fn => j.arrowFunctionExpression(
     fn.params,
@@ -55,4 +55,4 @@ module.exports = (file, api, options) => {
     .size() > 0;
 
   return didTransform ? root.toSource(printOptions) : null;
-}
+};

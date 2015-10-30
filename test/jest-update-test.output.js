@@ -13,7 +13,7 @@ require('mock-modules').doSomethingCrazy();
 
 jest.genMockFromModule();
 
-jest.mock('foo').dontMock('bar')
+jest.mock('foo').dontMock('bar');
 
 jest.dontMock('foo');
 

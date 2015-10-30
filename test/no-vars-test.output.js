@@ -1,3 +1,5 @@
+/* eslint-disable one-var, prefer-const */
+
 const module = require('module');
 
 for (let i = 0; i < 10; i++) {
@@ -25,7 +27,7 @@ const object = {
   'a': 1,
   'b': 2,
   'c': 3,
-  'd': 4
+  'd': 4,
 };
 
 for (let [key, value] of object.entries()) {
@@ -50,7 +52,7 @@ do {
 
   return () => {
     return _ = _ => _ => _ => _ => _ => { a = 7; };
-  }()
+  }();
 }();
 
 () => {
@@ -64,12 +66,12 @@ do {
 
 () => {
   for (var i = 0, z = 77; i < 10; i++) {
-    setTimeout(() => console.log(i))
+    setTimeout(() => console.log(i));
   }
 
   for (var j = 0; j < 10; j++) {
-    _.defer(function () {
-      console.log(j)
+    _.defer(function() {
+      console.log(j);
     });
   }
 

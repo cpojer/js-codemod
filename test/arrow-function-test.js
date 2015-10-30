@@ -1,3 +1,4 @@
+/* eslint-disable no-extra-bind */
 'use strict';
 
 var fn1 = (function() {
@@ -22,7 +23,9 @@ var fn5 = (function named() {
 }).bind(this);
 
 var fn6 = (function() {
-  return {a: 1};
+  return {
+    a: 1,
+  };
 }).bind(this);
 
 [1, 2, 3].map(function(x) {

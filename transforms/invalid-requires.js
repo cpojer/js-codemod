@@ -1,6 +1,5 @@
 module.exports = function(file, api) {
   const j = api.jscodeshift;
-  const {expression, statement, statements} = j.template;
   const S = new Set();
   const root = j(file.source)
     .find(j.CallExpression, {callee: {name: 'require'}})

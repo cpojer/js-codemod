@@ -19,7 +19,7 @@ require('mock-modules').doSomethingCrazy();
 
 require('mock-modules').generateMock();
 
-require('mock-modules').mock('foo').dontMock('bar')
+require('mock-modules').mock('foo').dontMock('bar');
 
 mocks.dontMock('foo');
 

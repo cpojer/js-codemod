@@ -1,3 +1,4 @@
+/* eslint-disable no-extra-bind */
 'use strict';
 
 var fn1 = () => console.log('Banana!');
@@ -18,7 +19,7 @@ var fn5 = (function named() {
 }).bind(this);
 
 var fn6 = () => ({
-  a: 1
+  a: 1,
 });
 
 [1, 2, 3].map(x => x * x);

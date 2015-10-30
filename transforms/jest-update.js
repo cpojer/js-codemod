@@ -3,14 +3,14 @@ module.exports = function(file, api, options = {}) {
     !file.path.includes('/__tests__/') &&
     !file.path.includes('/__mocks__/')
   ) {
-    return;
+    return null;
   }
 
   if (
     !file.source.includes('mock-modules') &&
     !file.source.includes('mocks')
   ) {
-    return;
+    return null;
   }
 
   const j = api.jscodeshift;

@@ -129,7 +129,7 @@ module.exports = (file, api, options) => {
         node.type == 'Identifier' &&
         node.name == 'defaults'
       );
-    }
+    },
   };
 
   const rmCopyPropertyCalls = path => {
@@ -145,7 +145,7 @@ module.exports = (file, api, options) => {
         path.value.arguments.map(getObject)
       ));
     }
-  }
+  };
 
   if (options.inlineStateAndProps) {
     options.filters.push('onlyObjectExpressions');
@@ -171,4 +171,4 @@ module.exports = (file, api, options) => {
     }
   }
   return null;
-}
+};

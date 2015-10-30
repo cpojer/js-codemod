@@ -4,7 +4,7 @@ function getJSXName(value) {
 
 module.exports = function(file, api) {
   if (file.source.indexOf('<Touchable') === -1) {
-    return;
+    return null;
   }
 
   var j = api.jscodeshift;
