@@ -29,6 +29,11 @@ can specify the `--inline-single-expressions=true` option and it will transform
 `function() { relay(); }.bind(this)` to `() => relay()` instead of
 `() => { relay(); }`.
 
+`object-shorthand` transforms object literals to use [ES6 shorthand](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Object_initializer#New_notations_in_ECMAScript_2015)
+for properties and methods.
+
+  * `jscodeshift -t js-codemod/transforms/object-shorthand.js <file>`
+
 ### Recast Options
 
 Options to [recast](https://github.com/benjamn/recast)'s printer can be provided
