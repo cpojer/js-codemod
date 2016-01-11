@@ -1,6 +1,6 @@
 /**
  * Removes quotes from object properties whose keys are strings which are valid
- * identifiers.
+ * identifiers. Does not handle quoted methods.
  */
 module.exports = (file, api, options) => {
   const j = api.jscodeshift;
@@ -9,7 +9,7 @@ module.exports = (file, api, options) => {
 
   const isValidIdentifierNameForProperty = (name) => {
     try {
-      new Function(`x = {${name}: 1}`)(); //eslint-disable-line no-new-func
+      new Function(`({${name}: 1})`)(); //eslint-disable-line no-new-func
     } catch (e) {
       return false;
     }
@@ -22,10 +22,11 @@ module.exports = (file, api, options) => {
       method: false,
       computed: false,
     })
-    .filter(p =>
+    .filter(p => (
       p.value.key.type === 'Literal' &&
       typeof p.value.key.value === 'string' &&
-      isValidIdentifierNameForProperty(p.value.key.value))
+      isValidIdentifierNameForProperty(p.value.key.value)
+    ))
     .forEach(p => p.value.key = j.identifier(p.value.key.value));
 
   return root.toSource(printOptions);

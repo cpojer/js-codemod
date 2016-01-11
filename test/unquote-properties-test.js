@@ -3,6 +3,7 @@ var x = {
   unquotedProp: 2,
   'quoted-prop': 3,
   method() { return 4; },
+  'quotedMethod'() { return 4; },
   '_quotedProp': 5,
   '$quotedProp': 6,
   'ĦĔĽĻŎ': 7,
