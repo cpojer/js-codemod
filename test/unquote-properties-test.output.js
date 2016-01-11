@@ -11,4 +11,7 @@ var x = {
   class: 9,
   1: 10,
   2: 11,
+  [Math.random()]() { return 'oh no'; },
+  [Math.random()]: 13,
+  ['quoted computed prop']: 14,
 };
