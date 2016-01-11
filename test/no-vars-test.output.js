@@ -47,24 +47,24 @@ do {
   console.log(a, b);
 } while (z--);
 
-() => {
+(() => {
   let a = 1;
 
-  return () => {
+  return (() => {
     return _ = _ => _ => _ => _ => _ => { a = 7; };
-  }();
-}();
+  })();
+})();
 
-() => {
+(() => {
   let a = 1;
   const b = 2, c = 3;
 
   a++;
 
   return b + a;
-}();
+})();
 
-() => {
+(() => {
   for (var i = 0, z = 77; i < 10; i++) {
     setTimeout(() => console.log(i));
   }
@@ -83,19 +83,18 @@ do {
   for (let z = 0; z < 10; z++) {
     setTimeout(() => console.log(z));
   }
-}();
+})();
 
-() => {
+(() => {
   let {foo, number} = bar;
   foo = xy;
   number++;
-}();
+})();
 
-() => {
+(() => {
   // should not destroy comments
   let querySet = {};
   if (true) {
     ({querySet} = someComputation());
   }
-}();
-
+})();
