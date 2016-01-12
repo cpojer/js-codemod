@@ -34,6 +34,11 @@ for properties and methods.
 
   * `jscodeshift -t js-codemod/transforms/object-shorthand.js <file>`
 
+`unquote-properties` removes quotes from object properties whose keys are
+strings which are valid identifiers.
+
+  * `jscodeshift -t js-codemod/transforms/unquote-properties.js <file>`
+
 ### Recast Options
 
 Options to [recast](https://github.com/benjamn/recast)'s printer can be provided
