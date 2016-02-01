@@ -98,3 +98,8 @@ do {
     ({querySet} = someComputation());
   }
 })();
+
+(() => {
+  const {...foo} = bar;
+  bar = foo;
+})();

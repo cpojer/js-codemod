@@ -97,3 +97,8 @@ do {
     ({querySet} = someComputation());
   }
 }();
+
+() => {
+  var {...foo} = bar;
+  bar = foo;
+}();

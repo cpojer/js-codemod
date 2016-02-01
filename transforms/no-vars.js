@@ -36,7 +36,9 @@ module.exports = function(file, api) {
       .filter(n => {
         if (declarator) {
           if (declarator.id.type === 'ObjectPattern') {
-            return declarator.id.properties.some(d => d.value.name === n.value.left.name);
+            return declarator.id.properties.some(d =>
+              (d.type === 'SpreadProperty' ? d.argument.name : d.value.name) === n.value.left.name
+            );
           } else if (declarator.id.type === 'ArrayPattern') {
             return declarator.id.elements.some(d =>
               (d.type === 'RestElement' ? d.argument.name : d.name) === n.value.left.name
@@ -63,7 +65,9 @@ module.exports = function(file, api) {
       .filter(n => {
         if (declarator) {
           if (declarator.id.type === 'ObjectPattern') {
-            return declarator.id.properties.some(d => d.value.name === n.value.argument.name);
+            return declarator.id.properties.some(d =>
+              (d.type === 'SpreadProperty' ? d.argument.name : d.value.name) === n.value.argument.name
+            );
           } else if (declarator.id.type === 'ArrayPattern') {
             return declarator.id.elements.some(
               e => (e.type === 'RestElement' ? e.argument.name : e.name) === n.value.argument.name
