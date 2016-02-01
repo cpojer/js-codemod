@@ -101,4 +101,13 @@ do {
 () => {
   var {...foo} = bar;
   bar = foo;
+  var {...foo2} = bar2;
+  foo2 = bar2;
+}();
+
+() => {
+  var [first, ...rest] = foo;
+  bar = foo;
+  var [first2, ...rest2] = foo2;
+  rest2 = foo2;
 }();
