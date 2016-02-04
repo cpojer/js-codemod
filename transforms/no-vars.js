@@ -25,10 +25,26 @@ export default function(file, api) {
     return {scopeNode, isInFor};
   };
 
+  const getDeclaratorNames = (declarator) => {
+    if (declarator.id.type === 'ObjectPattern') {
+      return declarator.id.properties.map(
+        d => (d.type === 'SpreadProperty' ? d.argument.name : d.value.name)
+      );
+    } else if (declarator.id.type === 'ArrayPattern') {
+      return declarator.id.elements.map(
+        e => (e.type === 'RestElement' ? e.argument.name : e.name)
+      );
+    } else if (declarator.id.type === 'Identifier') {
+      return [declarator.id.name];
+    }
+  };
+  const isIdInDeclarator = (declarator, name) => {
+    return getDeclaratorNames(declarator).indexOf(name) !== -1;
+  };
+
   const isTruelyVar = (node, declarator) => {
     const blockScopeNode = node.parentPath;
     const {scopeNode, isInFor} = getScopeNode(blockScopeNode);
-
 
     // if we are in a for loop of some kind, and the variable
     // is referenced within a closure, rever to `var`
@@ -39,31 +55,40 @@ export default function(file, api) {
       j(blockScopeNode).find(j.Function).filter(
         functionNode => (
           j(functionNode).find(j.Identifier).filter(
-            id => id.value.name === declarator.id.name
+            id => isIdInDeclarator(declarator, id.value.name)
           ).size() !== 0
         )
       ).size() !== 0
     );
-    return isUsedInClosure || j(scopeNode)
+
+    // if two attempts are made to declare the same variable,
+    // revert to `var`
+    // TODO: if they are in different block scopes, it may be
+    //       safe to convert them anyway
+    const isDeclaredTwice = j(scopeNode)
+      .find(j.VariableDeclarator)
+      .filter(otherDeclarator => {
+        return (
+          otherDeclarator.value !== declarator &&
+          getScopeNode(otherDeclarator).scopeNode === scopeNode &&
+          getDeclaratorNames(otherDeclarator.value).some(
+            name => isIdInDeclarator(declarator, name)
+          )
+        );
+      }).size() !== 0;
+    return isUsedInClosure || isDeclaredTwice || j(scopeNode)
       .find(j.Identifier)
       .filter(n => {
-        if (declarator.id.name === n.value.name && getScopeNode(n.parent).scopeNode === scopeNode) {
+        if (
+          isIdInDeclarator(declarator, n.value.name) &&
+          getScopeNode(n.parent).scopeNode === scopeNode
+        ) {
           // if the variable is referenced outside the current block
           // scope, revert to using `var`
           const isOutsideCurrentScope = (
             j(blockScopeNode).find(j.Identifier).filter(
               innerNode => innerNode.node.start === n.node.start
             ).size() === 0
-          );
-
-          // if two attempts are made to declare the same variable,
-          // revert to `var`
-          // TODO: if they are in different block scopes, it may be
-          //       safe to convert them anyway
-          const isDeclaredTwice = (
-            n.parent.value.type === 'VariableDeclarator' &&
-            n.parent.value.id === n.value &&
-            n.parent.value !== declarator
           );
 
           // if a variable is used before it is declared, rever to
@@ -77,7 +102,6 @@ export default function(file, api) {
 
           return (
             isOutsideCurrentScope ||
-            isDeclaredTwice ||
             isUsedBeforeDeclaration
           );
         }

@@ -133,3 +133,9 @@ for (var dangerousLoop = 0; dangerousLoop < 10; dangerousLoop++) {
     console.log(dangerousLoop);
   }, 100);
 }
+
+console.log(desctructuringAlias);
+var {desctructuringToBeAliased: desctructuringAlias} = whatever();
+
+var {descructuringB} = whatever();
+var {descructuringB} = whateverElse();
