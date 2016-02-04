@@ -2,11 +2,11 @@
 
 const module = require('module');
 
-for (let i = 0; i < 10; i++) {
+for (var i = 0; i < 10; i++) {
 
 }
 
-for (let i = 0; i < 10; i++) {
+for (i = 0; i < 10; i++) {
 }
 
 let letItBe;
@@ -56,8 +56,7 @@ do {
 })();
 
 (() => {
-  let a = 1;
-  const b = 2, c = 3;
+  let a = 1, b = 2, c = 3;
 
   a++;
 
@@ -112,3 +111,25 @@ do {
   let [first2, ...rest2] = foo2;
   rest2 = foo2;
 })();
+
+var myDoubleLet = 10;
+myDoubleLet++;
+var myDoubleLet = 20;
+myDoubleLet++;
+
+var myFakeConstant = 10;
+var myFakeConstant = 20;
+
+if (true) {
+  var blockScopeAbuse = 10;
+}
+console.log(blockScopeAbuse);
+
+console.log(usedTooEarly);
+var usedTooEarly = 10;
+
+for (var dangerousLoop = 0; dangerousLoop < 10; dangerousLoop++) {
+  setTimeout(() => {
+    console.log(dangerousLoop);
+  }, 100);
+}

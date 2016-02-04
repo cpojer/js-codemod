@@ -1,23 +1,88 @@
-/**
- * Transform all your `var`s to `let` and `const`.
- *
- * Does not yet manage things that abuse variable hoisting rules. E.g. current
- * transform will cause this behavioral change:
- *
- * console.log(a); // undefined
- * if (true) {
- *   var a = 0;
- * }
- *
- * console.log(a); // TypeError
- * if (true) {
- *   let a = 0;
- * }
- */
-
-
-module.exports = function(file, api) {
+export default function(file, api) {
   const j = api.jscodeshift;
+
+  const root = j(file.source);
+
+  const TOP_LEVEL_TYPES = [
+    'Function',
+    'FunctionDeclaration',
+    'FunctionExpression',
+    'ArrowFunctionExpression',
+    'Program',
+  ];
+  const FOR_STATEMENTS = [
+    'ForStatement',
+    'ForOfStatement',
+    'ForInStatement',
+  ];
+  const getScopeNode = blockScopeNode => {
+    let scopeNode = blockScopeNode;
+    let isInFor = FOR_STATEMENTS.indexOf(blockScopeNode.value.type) !== -1;
+    while (TOP_LEVEL_TYPES.indexOf(scopeNode.node.type) === -1) {
+      scopeNode = scopeNode.parentPath;
+      isInFor = isInFor || FOR_STATEMENTS.indexOf(scopeNode.value.type) !== -1;
+    }
+    return {scopeNode, isInFor};
+  };
+
+  const isTruelyVar = (node, declarator) => {
+    const blockScopeNode = node.parentPath;
+    const {scopeNode, isInFor} = getScopeNode(blockScopeNode);
+
+
+    // if we are in a for loop of some kind, and the variable
+    // is referenced within a closure, rever to `var`
+    // It would be safe to do the conversion if you can verify
+    // that the callback is run synchronously
+    const isUsedInClosure = (
+      isInFor &&
+      j(blockScopeNode).find(j.Function).filter(
+        functionNode => (
+          j(functionNode).find(j.Identifier).filter(
+            id => id.value.name === declarator.id.name
+          ).size() !== 0
+        )
+      ).size() !== 0
+    );
+    return isUsedInClosure || j(scopeNode)
+      .find(j.Identifier)
+      .filter(n => {
+        if (declarator.id.name === n.value.name && getScopeNode(n.parent).scopeNode === scopeNode) {
+          // if the variable is referenced outside the current block
+          // scope, revert to using `var`
+          const isOutsideCurrentScope = (
+            j(blockScopeNode).find(j.Identifier).filter(
+              innerNode => innerNode.node.start === n.node.start
+            ).size() === 0
+          );
+
+          // if two attempts are made to declare the same variable,
+          // revert to `var`
+          // TODO: if they are in different block scopes, it may be
+          //       safe to convert them anyway
+          const isDeclaredTwice = (
+            n.parent.value.type === 'VariableDeclarator' &&
+            n.parent.value.id === n.value &&
+            n.parent.value !== declarator
+          );
+
+          // if a variable is used before it is declared, rever to
+          // `var`
+          // TODO: If `isDeclaredTwice` is improved, and there is
+          //       another declaration for this variable, it may be
+          //       safe to convert this anyway
+          const isUsedBeforeDeclaration = (
+            n.value.start < declarator.start
+          );
+
+          return (
+            isOutsideCurrentScope ||
+            isDeclaredTwice ||
+            isUsedBeforeDeclaration
+          );
+        }
+      }).size() > 0;
+  };
 
   /**
    * isMutated utility function to determine whether a VariableDeclaration
@@ -85,117 +150,22 @@ module.exports = function(file, api) {
     return hasAssignmentMutation || hasUpdateMutation;
   };
 
-  const isAccessedInClosure = (node) => {
-
-    return j(node.value.body)
-      .find(j.Identifier)
-      .filter(n => {
-        const declarations = node.value.init ? node.value.init.declarations
-                           : node.value.left ? node.value.left.declarations
-                           : [];
-        if (declarations.some(d => d.id.name === n.value.name)) {
-          let parent = n.parent;
-          while (parent.value !== node.value.body) {
-            parent = parent.parent;
-            const {type} = parent.value;
-            if (
-              'Function' === type ||
-              'FunctionDeclaration' === type ||
-              'FunctionExpression' === type ||
-              'ArrowFunctionExpression' === type
-            ) {
-              return true;
-            }
-          }
-          return false;
-        }
-      }).size() > 0;
-  };
-
-  const root = j(file.source);
-
-  // convert all necessary variable declarations to let or const
-  const changedVariableDeclaration = root
-    .find(j.VariableDeclaration)
-    .filter(
-      p => {
-        if (
-          'ForStatement' === p.parent.value.type ||
-          'ForInStatement' === p.parent.value.type ||
-          'ForOfStatement' === p.parent.value.type
-        ) {
-          if (p.value.kind !== 'var') {
-            return false;
-          }
-
-          if (!isAccessedInClosure(p.parent)) {
-            p.value.kind = 'let';
-          } else {
-            console.warn(
-              'WARNING: A variable binding in a `for` loop is accessed '+
-              'inside a new scope. This could be indicative of a race ' +
-              'condition or other unintended access. We have left the ' +
-              'binding as a `var`. View the following code at `%s#%s`',
-              file.path, p.value.loc.start.line
-            );
-            console.log(j(p.parent).toSource() + '\n');
-          }
-          return true;
-        } else {
-          const lets = [];
-          const consts = [];
-          p.value.declarations.forEach(decl => {
-            if (!decl.init || isMutated(p, decl)) {
-              lets.push(decl);
-            } else {
-              consts.push(decl);
-            }
-          });
-
-          const replaceWith = [];
-          if (lets.length) {
-            replaceWith.push(j.variableDeclaration('let', lets));
-          }
-          if (consts.length) {
-            replaceWith.push(j.variableDeclaration('const', consts));
-          }
-
-          if (replaceWith.length) {
-            if (p.value.comments || p.value.leadingComments) {
-              replaceWith[0].leadingComments = p.value.leadingComments;
-              replaceWith[0].comments = p.value.comments;
-            }
-            j(p).replaceWith(replaceWith);
-            return true;
-          } else {
-            return false;
-          }
-        }
-      }
-    ).size() > 0;
-
-  // if a iterator statement attempts to reuse a loose iterator variable
-  // change it to a let declaration
-  const changedStatement = root
-    .find(j.Statement)
-    .filter(exp => (
-      'ForStatement' === exp.value.type ||
-      'ForInStatement' === exp.value.type ||
-      'ForOfStatement' === exp.value.type
-    ))
-    .filter(stmt => (
-      stmt.value.init && stmt.value.init.type === 'AssignmentExpression'
-    ))
-    .forEach(p => {
-      p.value.init = j.variableDeclaration(
-        p.value.type === 'ForStatement' || isMutated(p.value) ? 'let' : 'const',
-        [j.variableDeclarator(p.value.init.left, p.value.init.right)]
-      );
-    }).size() > 0;
-
-  if (changedVariableDeclaration || changedStatement) {
-    return root.toSource();
-  }
-
-  return null;
-};
+  root.find(j.VariableDeclaration).filter(
+    dec => dec.value.kind === 'var'
+  ).filter(declaration => {
+    return declaration.value.declarations.every(declarator => {
+      return !isTruelyVar(declaration, declarator);
+    });
+  }).forEach(declaration => {
+    if (
+      declaration.value.declarations.some(declarator => {
+        return !declarator.init || isMutated(declaration, declarator);
+      })
+    ) {
+      declaration.value.kind = 'let';
+    } else {
+      declaration.value.kind = 'const';
+    }
+  });
+  return root.toSource();
+}
