@@ -24,6 +24,12 @@ export default function(file, api) {
     }
     return {scopeNode, isInFor};
   };
+  const findFunctionDeclaration = (node, container) => {
+    while (node.value.type !== 'FunctionDeclaration' && node !== container) {
+      node = node.parentPath;
+    }
+    return node !== container ? node : null;
+  };
 
   const getDeclaratorNames = (declarator) => {
     if (declarator.id.type === 'ObjectPattern') {
@@ -76,13 +82,31 @@ export default function(file, api) {
           )
         );
       }).size() !== 0;
+
     return isUsedInClosure || isDeclaredTwice || j(scopeNode)
       .find(j.Identifier)
       .filter(n => {
-        if (
-          isIdInDeclarator(declarator, n.value.name) &&
-          getScopeNode(n.parent).scopeNode === scopeNode
-        ) {
+        if (!isIdInDeclarator(declarator, n.value.name)) {
+          return false;
+        }
+        // If the variable is used in a function declaration that gets
+        // hoisted, it could get called early
+        const functionDeclaration = findFunctionDeclaration(n, scopeNode);
+        const isCalledInHoistedFunction = (
+          functionDeclaration &&
+          j(scopeNode)
+            .find(j.Identifier)
+            .filter(n => {
+              return (
+                n.value.name === functionDeclaration.value.id.name &&
+                n.value.start < declarator.start
+              );
+            }).size() !== 0
+        );
+        if (isCalledInHoistedFunction) {
+          return true;
+        }
+        if (getScopeNode(n.parent).scopeNode === scopeNode) {
           // if the variable is referenced outside the current block
           // scope, revert to using `var`
           const isOutsideCurrentScope = (
@@ -174,7 +198,7 @@ export default function(file, api) {
     return hasAssignmentMutation || hasUpdateMutation;
   };
 
-  root.find(j.VariableDeclaration).filter(
+  const updatedAnything = root.find(j.VariableDeclaration).filter(
     dec => dec.value.kind === 'var'
   ).filter(declaration => {
     return declaration.value.declarations.every(declarator => {
@@ -190,6 +214,6 @@ export default function(file, api) {
     } else {
       declaration.value.kind = 'const';
     }
-  });
-  return root.toSource();
+  }).size() !== 0;
+  return updatedAnything ? root.toSource() : null;
 }
