@@ -139,3 +139,10 @@ var {desctructuringToBeAliased: desctructuringAlias} = whatever();
 
 var {descructuringB} = whatever();
 var {descructuringB} = whateverElse();
+
+setSetByHoistedFunction();
+var setByHoistedFunction;
+function setSetByHoistedFunction() {
+  setByHoistedFunction = 10;
+}
+console.log(setByHoistedFunction);
