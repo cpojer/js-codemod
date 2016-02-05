@@ -146,3 +146,14 @@ function setSetByHoistedFunction() {
   setByHoistedFunction = 10;
 }
 console.log(setByHoistedFunction);
+
+var mutatedInAFunction = 10;
+function mutateMutatedInAFunction() {
+  mutatedInAFunction = 20;
+}
+if (true) {
+  var usedInAFunction = 10;
+}
+function useUsedInAFunction() {
+  console.log(usedInAFunction);
+}
