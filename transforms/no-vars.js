@@ -31,21 +31,63 @@ export default function(file, api) {
     return node !== container ? node : null;
   };
 
-  const getDeclaratorNames = (declarator) => {
-    if (declarator.id.type === 'ObjectPattern') {
-      return declarator.id.properties.map(
+  const extractNamesFromIdentifierLike = id => {
+    if (id.type === 'ObjectPattern') {
+      return id.properties.map(
         d => (d.type === 'SpreadProperty' ? d.argument.name : d.value.name)
       );
-    } else if (declarator.id.type === 'ArrayPattern') {
-      return declarator.id.elements.map(
+    } else if (id.type === 'ArrayPattern') {
+      return id.elements.map(
         e => (e.type === 'RestElement' ? e.argument.name : e.name)
       );
-    } else if (declarator.id.type === 'Identifier') {
-      return [declarator.id.name];
+    } else if (id.type === 'Identifier') {
+      return [id.name];
+    } else if (id.type === 'RestElement') {
+      return[id.argument.name];
+    } else {
+      console.log(id);
+      return [];
     }
+  };
+  const getDeclaratorNames = (declarator) => {
+    return extractNamesFromIdentifierLike(declarator.id);
   };
   const isIdInDeclarator = (declarator, name) => {
     return getDeclaratorNames(declarator).indexOf(name) !== -1;
+  };
+  const getLocalScope = (scope, parentScope) => {
+    const names = [];
+    while (scope !== parentScope) {
+      if (Array.isArray(scope.value.body)) {
+        scope.value.body.forEach(node => {
+          if (node.type === 'VariableDeclaration') {
+            node.declarations.map(getDeclaratorNames).forEach(dNames => {
+              dNames.forEach(name => {
+                if (names.indexOf(name) === -1) {
+                  names.push(name);
+                }
+              });
+            });
+          }
+        })
+      }
+      if (Array.isArray(scope.value.params)) {
+        scope.value.params.forEach(id => {
+          extractNamesFromIdentifierLike(id).forEach(name => {
+            if (names.indexOf(name) === -1) {
+              names.push(name);
+            }
+          });
+        });
+      }
+      scope = scope.parentPath;
+    }
+    return names;
+  };
+  const hasLocalDeclarationFor = (nodePath, parentScope, name) => {
+    return (
+      getLocalScope(nodePath, parentScope).indexOf(name) !== -1
+    );
   };
 
   const isTruelyVar = (node, declarator) => {
@@ -106,7 +148,11 @@ export default function(file, api) {
         if (isCalledInHoistedFunction) {
           return true;
         }
-        if (getScopeNode(n.parent).scopeNode === scopeNode) {
+        const referenceScope = getScopeNode(n.parent).scopeNode;
+        if (
+          referenceScope === scopeNode ||
+          !hasLocalDeclarationFor(n, scopeNode, n.value.name)
+        ) {
           // if the variable is referenced outside the current block
           // scope, revert to using `var`
           const isOutsideCurrentScope = (
