@@ -111,3 +111,31 @@ do {
   var [first2, ...rest2] = foo2;
   rest2 = foo2;
 }();
+
+var myDoubleLet = 10;
+myDoubleLet++;
+var myDoubleLet = 20;
+myDoubleLet++;
+
+var myFakeConstant = 10;
+var myFakeConstant = 20;
+
+if (true) {
+  var blockScopeAbuse = 10;
+}
+console.log(blockScopeAbuse);
+
+console.log(usedTooEarly);
+var usedTooEarly = 10;
+
+for (var dangerousLoop = 0; dangerousLoop < 10; dangerousLoop++) {
+  setTimeout(() => {
+    console.log(dangerousLoop);
+  }, 100);
+}
+
+console.log(desctructuringAlias);
+var {desctructuringToBeAliased: desctructuringAlias} = whatever();
+
+var {descructuringB} = whatever();
+var {descructuringB} = whateverElse();
