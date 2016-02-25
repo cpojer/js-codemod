@@ -23,7 +23,8 @@
     "eslint": "^1.7.3",
     "fbjs-scripts": "^0.3.0",
     "jest-cli": "^0.6.1",
-    "react-codemod": "https://github.com/reactjs/react-codemod.git#8d84d6def1f653dffe63f25f9b8fc1f4e3f99b68"
+    "react-codemod": "https://github.com/reactjs/react-codemod.git#8d84d6def1f653dffe63f25f9b8fc1f4e3f99b68",
+    "nuclide-format-js-base": "0.0.35"
   },
   "jest": {
     "scriptPreprocessor": "./node_modules/babel-jest",
@@ -32,7 +33,8 @@
       "baseDir": "../../../"
     },
     "testPathDirs": [
-      "test"
+      "test",
+      "extensions"
     ]
   }
 }

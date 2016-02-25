@@ -39,6 +39,11 @@ strings which are valid identifiers.
 
   * `jscodeshift -t js-codemod/transforms/unquote-properties.js <file>`
 
+### Included extensions
+
+`imports` helpers for modifying `import` and `require` statements,
+[see docs](extensions/imports/).
+
 ### Recast Options
 
 Options to [recast](https://github.com/benjamn/recast)'s printer can be provided
