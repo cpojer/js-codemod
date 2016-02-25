@@ -1,22 +1,22 @@
-## Imports extension
+## jscodeshift-imports extension
 
 A [JSCodeshift](https://github.com/facebook/jscodeshift) extension which
 contains helpers for modifying `import` and `require` statements.
 
 ### Setup
 
-Register the extension with jscodeshift.
+Install extension: `npm install jscodeshift-imports`.
 
-Usage:
+Register the extension with jscodeshift:
 ```javascript
-const imports = require('js-codemod/extensions/imports');
+const imports = require('jscodeshift-imports');
 
 module.exports = function(fileInfo, api) {
   const {jscodeshift} = api;
 
   imports.register(jscodeshift, imports.config.CJSBasicRequire);
 
-  // transform here.
+  // Your transform here.
 }
 ```
 
@@ -33,10 +33,13 @@ You can also provide your own custom config.
 
 #### `addImport`
 
-Usage:
+This helper allows you to insert require statements into the most appropriate
+place within a file, it does this in a non destructive way so your codemod will
+change as little in the file as it can.
 
+Usage:
 ```javascript
-const imports = require('js-codemod/extensions/imports');
+const imports = require('jscodeshift-imports');
 
 module.exports = function(fileInfo, api) {
   const {jscodeshift} = api;
@@ -48,6 +51,7 @@ module.exports = function(fileInfo, api) {
     .addImport(statement`
       const MyRequireItem = require('MyRequireItem');
     `)
+    .toSource();
 }
 ```
 

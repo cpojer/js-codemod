@@ -41,7 +41,7 @@ strings which are valid identifiers.
 
 ### Included extensions
 
-`imports` helpers for modifying `import` and `require` statements,
+`jscodeshift-imports` helpers for modifying `import` and `require` statements,
 [see docs](extensions/imports/).
 
 ### Recast Options
