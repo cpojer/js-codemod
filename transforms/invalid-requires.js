@@ -20,6 +20,9 @@ module.exports = function(file, api) {
 
         if (i == 0) {
           variableDeclaration.comments = requireStatement.value.comments;
+        } else if (declaration.comments) {
+          variableDeclaration.comments = declaration.comments;
+          declaration.comments = null;
         }
 
         return variableDeclaration;
