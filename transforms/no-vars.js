@@ -43,7 +43,7 @@ export default function(file, api) {
     } else if (id.type === 'Identifier') {
       return [id.name];
     } else if (id.type === 'RestElement') {
-      return[id.argument.name];
+      return [id.argument.name];
     } else {
       console.log(id);
       return [];
@@ -69,7 +69,7 @@ export default function(file, api) {
               });
             });
           }
-        })
+        });
       }
       if (Array.isArray(scope.value.params)) {
         scope.value.params.forEach(id => {
