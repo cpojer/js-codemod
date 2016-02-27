@@ -1,25 +1,34 @@
 module.exports = function(file, api) {
-  const j = api.jscodeshift;
-  const S = new Set();
-  const root = j(file.source)
-    .find(j.CallExpression, {callee: {name: 'require'}})
-  .filter(p => (
-      p.parent.value.type == 'VariableDeclarator' &&
-      p.parent.parent.value.declarations.length != 1
+  const jscodeshift = api.jscodeshift;
+  const requireStatements = new Set();
+
+  const root = jscodeshift(file.source)
+    .find(jscodeshift.CallExpression, {callee: {name: 'require'}})
+    .filter(requireStatement => (
+      requireStatement.parent.value.type == 'VariableDeclarator' &&
+      requireStatement.parent.parent.value.declarations.length != 1
     ))
-    .forEach(p => {
-      S.add(p.parent.parent);
+    .forEach(requireStatement => {
+      requireStatements.add(requireStatement.parent.parent);
     });
-  S.forEach(p => {
-    j(p).replaceWith(p.value.declarations.map(
-      (declaration, i) => {
-        var d = j.variableDeclaration('var', [declaration]);
+
+  requireStatements.forEach(requireStatement => {
+    jscodeshift(requireStatement)
+      .replaceWith(requireStatement.value.declarations.map((declaration, i) => {
+        var variableDeclaration =
+          jscodeshift.variableDeclaration('var', [declaration]);
+
         if (i == 0) {
-          d.comments = p.value.comments;
+          variableDeclaration.comments = requireStatement.value.comments;
+        } else if (declaration.comments) {
+          variableDeclaration.comments = declaration.comments;
+          declaration.comments = null;
         }
-        return d;
+
+        return variableDeclaration;
       }
     ));
   });
-  return S.size ? root.toSource({quote: 'single'}) : null;
+
+  return requireStatements.size ? root.toSource({quote: 'single'}) : null;
 };
