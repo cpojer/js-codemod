@@ -15,8 +15,9 @@ module.exports = function(file, api) {
   requireStatements.forEach(requireStatement => {
     jscodeshift(requireStatement)
       .replaceWith(requireStatement.value.declarations.map((declaration, i) => {
-        var variableDeclaration =
-          jscodeshift.variableDeclaration('var', [declaration]);
+        const kind = requireStatement.value.kind; // e.g. var or const
+        const variableDeclaration =
+          jscodeshift.variableDeclaration(kind, [declaration]);
 
         if (i == 0) {
           variableDeclaration.comments = requireStatement.value.comments;
