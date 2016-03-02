@@ -1,5 +1,6 @@
-module.exports = function(file, api) {
+module.exports = function(file, api, options) {
   const jscodeshift = api.jscodeshift;
+  const printOptions = options.printOptions || {quote: 'single'};
   const requireStatements = new Set();
 
   const root = jscodeshift(file.source)
@@ -31,5 +32,5 @@ module.exports = function(file, api) {
     ));
   });
 
-  return requireStatements.size ? root.toSource({quote: 'single'}) : null;
+  return requireStatements.size ? root.toSource(printOptions) : null;
 };

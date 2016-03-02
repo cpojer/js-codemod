@@ -1,7 +1,9 @@
-module.exports = function(file, api) {
+module.exports = function(file, api, options) {
   if (file.path.indexOf('/__tests__/') == -1) {
     return null;
   }
+
+  const printOptions = options.printOptions || {quote: 'single'};
 
   const REQUIRE_CALL = {
     type: 'CallExpression',
@@ -216,5 +218,5 @@ module.exports = function(file, api) {
 
   body[0].comments = firstComment;
 
-  return root.toSource({quote: 'single'});
+  return root.toSource(printOptions);
 };
