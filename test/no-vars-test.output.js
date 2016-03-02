@@ -134,11 +134,11 @@ for (var dangerousLoop = 0; dangerousLoop < 10; dangerousLoop++) {
   }, 100);
 }
 
-console.log(desctructuringAlias);
-var {desctructuringToBeAliased: desctructuringAlias} = whatever();
+console.log(destructuringAlias);
+var {destructuringToBeAliased: destructuringAlias} = whatever();
 
-var {descructuringB} = whatever();
-var {descructuringB} = whateverElse();
+var {destructuringB} = whatever();
+var {destructuringB} = whateverElse();
 
 setSetByHoistedFunction();
 var setByHoistedFunction;
