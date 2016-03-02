@@ -38,7 +38,15 @@ export default function(file, api) {
       );
     } else if (id.type === 'ArrayPattern') {
       return id.elements.map(
-        e => (e.type === 'RestElement' ? e.argument.name : e.name)
+        e => {
+          if (!e) {
+            return null;
+          }
+          if (e.type === 'RestElement') {
+            return e.argument.name;
+          }
+          return e.name;
+        }
       );
     } else if (id.type === 'Identifier') {
       return [id.name];
@@ -199,9 +207,13 @@ export default function(file, api) {
               (d.type === 'SpreadProperty' ? d.argument.name : d.value.name) === n.value.left.name
             );
           } else if (declarator.id.type === 'ArrayPattern') {
-            return declarator.id.elements.some(d =>
-              (d.type === 'RestElement' ? d.argument.name : d.name) === n.value.left.name
-            );
+            return declarator.id.elements.some(d => {
+              if (!d) {
+                return false;
+              }
+              const name = d.type === 'RestElement' ? d.argument.name : d.name;
+              return name === n.value.left.name;
+            });
           }
 
           if (n.value.left.type === 'ObjectPattern') {
@@ -228,9 +240,13 @@ export default function(file, api) {
               (d.type === 'SpreadProperty' ? d.argument.name : d.value.name) === n.value.argument.name
             );
           } else if (declarator.id.type === 'ArrayPattern') {
-            return declarator.id.elements.some(
-              e => (e.type === 'RestElement' ? e.argument.name : e.name) === n.value.argument.name
-            );
+            return declarator.id.elements.some(e => {
+              if (!e) {
+                return false;
+              }
+              const name = e.type === 'RestElement' ? e.argument.name : e.name;
+              return name === n.value.argument.name;
+            });
           }
 
           return declarator.id.name === n.value.argument.name;

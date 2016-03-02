@@ -140,6 +140,8 @@ var {destructuringToBeAliased: destructuringAlias} = whatever();
 var {destructuringB} = whatever();
 var {destructuringB} = whateverElse();
 
+var [, destructuringC, destructuringD] = whatever();
+
 setSetByHoistedFunction();
 var setByHoistedFunction;
 function setSetByHoistedFunction() {
