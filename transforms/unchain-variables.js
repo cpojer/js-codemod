@@ -1,8 +1,9 @@
 /**
  * Unchains chained variable declarations.
  */
-module.exports = function(file, api) {
+module.exports = function(file, api, options) {
   const jscodeshift = api.jscodeshift;
+  const printOptions = options.printOptions || {quote: 'single'};
 
   const chainedDeclarations = jscodeshift(file.source)
     .find(jscodeshift.VariableDeclaration)
@@ -30,6 +31,6 @@ module.exports = function(file, api) {
   });
 
   return chainedDeclarations.size
-    ? chainedDeclarations.toSource({quote: 'single'})
+    ? chainedDeclarations.toSource(printOptions)
     : null;
 };
