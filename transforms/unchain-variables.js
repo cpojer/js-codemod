@@ -9,6 +9,9 @@ module.exports = function(file, api, options) {
     .find(jscodeshift.VariableDeclaration)
     .filter(variableDeclaration => (
       variableDeclaration.value.declarations.length > 1
+    ))
+    .filter(variableDeclaration => (
+      variableDeclaration.parent.value.type !== 'ForStatement'
     ));
 
   chainedDeclarations.forEach(chainedDeclaration => {
