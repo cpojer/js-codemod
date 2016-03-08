@@ -53,7 +53,6 @@ export default function(file, api) {
     } else if (id.type === 'RestElement') {
       return [id.argument.name];
     } else {
-      console.log(id);
       return [];
     }
   };
