@@ -1,3 +1,5 @@
+'use strict';
+
 const jscs = require('jscodeshift');
 const hasOneRequireDeclaration = require('nuclide-format-js-base/lib/utils/hasOneRequireDeclaration');
 

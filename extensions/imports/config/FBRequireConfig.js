@@ -1,4 +1,6 @@
-const {compareStrings, isCapitalized} = require('nuclide-format-js-base/lib/utils/StringUtils');
+'use strict';
+
+const StringUtils = require('nuclide-format-js-base/lib/utils/StringUtils');
 const getDeclarationName = require('../utils/getDeclarationName');
 const isGlobal = require('nuclide-format-js-base/lib/utils/isGlobal');
 const isValidRequireDeclaration = require('../utils/isValidRequireDeclaration');
@@ -11,9 +13,9 @@ module.exports = [
     filters: [
       isGlobal,
       path => isValidRequireDeclaration(path.node),
-      path => isCapitalized(getDeclarationName(path.node)),
+      path => StringUtils.isCapitalized(getDeclarationName(path.node)),
     ],
-    comparator: (node1, node2) => compareStrings(
+    comparator: (node1, node2) => StringUtils.compareStrings(
       getDeclarationName(node1),
       getDeclarationName(node2)
     ),
@@ -25,9 +27,9 @@ module.exports = [
     filters: [
       isGlobal,
       path => isValidRequireDeclaration(path.node),
-      path => !isCapitalized(getDeclarationName(path.node)),
+      path => !StringUtils.isCapitalized(getDeclarationName(path.node)),
     ],
-    comparator: (node1, node2) => compareStrings(
+    comparator: (node1, node2) => StringUtils.compareStrings(
       getDeclarationName(node1),
       getDeclarationName(node2)
     ),

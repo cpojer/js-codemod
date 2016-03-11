@@ -1,6 +1,9 @@
+'use strict';
+
 const j = require('jscodeshift');
 
-const {statements, statement} = j.template;
+const statements = j.template.statements;
+const statement = j.template.statement;
 
 function findViaConfigType(type, nodePath) {
   return j(nodePath)
