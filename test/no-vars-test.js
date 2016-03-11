@@ -47,23 +47,23 @@ do {
   console.log(a, b);
 } while (z--);
 
-() => {
+(() => {
   var a = 1;
 
-  return () => {
+  return (() => {
     return _ = _ => _ => _ => _ => _ => { a = 7; };
-  }();
-}();
+  })();
+})();
 
-() => {
+(() => {
   var a = 1, b = 2, c = 3;
 
   a++;
 
   return b + a;
-}();
+})();
 
-() => {
+(() => {
   for (var i = 0, z = 77; i < 10; i++) {
     setTimeout(() => console.log(i));
   }
@@ -82,35 +82,35 @@ do {
   for (let z = 0; z < 10; z++) {
     setTimeout(() => console.log(z));
   }
-}();
+})();
 
-() => {
+(() => {
   var {foo, number} = bar;
   foo = xy;
   number++;
-}();
+})();
 
-() => {
+(() => {
   // should not destroy comments
   var querySet = {};
   if (true) {
     ({querySet} = someComputation());
   }
-}();
+})();
 
-() => {
+(() => {
   var {...foo} = bar;
   bar = foo;
   var {...foo2} = bar2;
   foo2 = bar2;
-}();
+})();
 
-() => {
+(() => {
   var [first, ...rest] = foo;
   bar = foo;
   var [first2, ...rest2] = foo2;
   rest2 = foo2;
-}();
+})();
 
 var myDoubleLet = 10;
 myDoubleLet++;
