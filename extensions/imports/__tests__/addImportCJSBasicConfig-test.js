@@ -5,7 +5,7 @@ jest.autoMockOff();
 const jscodeshift = require('jscodeshift');
 const imports = require('../index');
 
-const {statement} = jscodeshift.template;
+const statement = jscodeshift.template.statement;
 
 const DEFAULT_RECAST_CONFIG = {
   quote: 'single',

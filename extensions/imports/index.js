@@ -1,3 +1,5 @@
+'use strict';
+
 const addImport = require('./addImport');
 const CJSBasicRequireConfig = require('./config/CJSBasicRequireConfig');
 const FBRequireConfig = require('./config/FBRequireConfig');

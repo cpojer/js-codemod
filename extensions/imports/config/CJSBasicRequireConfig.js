@@ -1,4 +1,6 @@
-const {compareStrings} = require('nuclide-format-js-base/lib/utils/StringUtils');
+'use strict';
+
+const StringUtils = require('nuclide-format-js-base/lib/utils/StringUtils');
 const getDeclarationName = require('../utils/getDeclarationName');
 const isGlobal = require('nuclide-format-js-base/lib/utils/isGlobal');
 const isValidRequireDeclaration = require('../utils/isValidRequireDeclaration');
@@ -12,7 +14,7 @@ module.exports = [
       isGlobal,
       path => isValidRequireDeclaration(path.node),
     ],
-    comparator: (node1, node2) => compareStrings(
+    comparator: (node1, node2) => StringUtils.compareStrings(
       getDeclarationName(node1),
       getDeclarationName(node2)
     ),
