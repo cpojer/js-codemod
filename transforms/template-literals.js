@@ -7,6 +7,9 @@
  * - Better handling of comments when they are in the middle of string
  *   concatenation. Currently, those are simply removed. Perhaps in these
  *   situations, the string concatenation should be preserved as-is.
+ *
+ * - Better handling of code like 1 + 2 + 'foo' + bar which would ideally become
+ *   `${1 + 2}foo${bar}`.
  */
 module.exports = function templateLiterals(file, api, options) {
   const j = api.jscodeshift;
