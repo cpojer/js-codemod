@@ -33,6 +33,9 @@ test = 'hi' + // comment in the middle
 test = `hi` + 'foo'; // template literal and string
 test = 'hi' + `foo`; // string and template literal
 test = 'hi' + 'foo'; // two strings
+test = 'hi' + 'foo' + 'bar'; // three strings
+test = `hi` + `foo`; // two template literals
+test = `hi` + `foo` + `bar`; // three template literals
 
 test = `${hi}` + 'foo'; // template literal with expression and string
 test = 'foo' + `${hi}`; // string and template literal with expression

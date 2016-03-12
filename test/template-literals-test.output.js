@@ -31,6 +31,9 @@ test = `hi${foo}`; // and at the end
 test = 'hifoo'; // template literal and string
 test = 'hifoo'; // string and template literal
 test = 'hifoo'; // two strings
+test = 'hifoobar'; // three strings
+test = 'hifoo'; // two template literals
+test = 'hifoobar'; // three template literals
 
 test = `${hi}foo`; // template literal with expression and string
 test = `foo${hi}`; // string and template literal with expression
