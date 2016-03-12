@@ -71,62 +71,60 @@ module.exports = function templateLiterals(file, api, options) {
     return isStringishNode(node);
   }
 
-  function buildTL(nodes, quasis = [], expressions = [], temp = '') {
-    if (nodes.length === 0) {
-      // We are done recursing
-      const newQuasis = [
-        ...quasis,
-        j.templateElement({ cooked: temp, raw: temp}, true),
-      ];
+  function joinQuasis(leftQuasis, rightQuasis) {
+    const lastQuasi = leftQuasis.pop();
 
-      return [newQuasis, expressions];
+    if (lastQuasi) {
+      rightQuasis[0] = j.templateElement({
+        cooked: lastQuasi.value.cooked + rightQuasis[0].value.cooked,
+        raw: lastQuasi.value.raw + rightQuasis[0].value.raw,
+      }, false);
+    }
+
+    return leftQuasis.concat(rightQuasis);
+  }
+
+  function buildTL(nodes, quasis = [], expressions = []) {
+    if (nodes.length === 0) {
+      return [quasis, expressions];
     }
 
     const [node, ...rest] = nodes;
 
     if (node.type === 'Literal') {
-      let val = node.value;
+      let val = node.value.toString();
       if (isStringNode(node)) {
         // Need to escape ${ already used by strings so that we don't introduce
         // new interpolation.
         val = val.replace(/\$\{/, '\\${');
       }
-      return buildTL(rest, quasis, expressions, temp + val);
+      const newQuasi = j.templateElement({ cooked: val, raw: val }, false);
+      const newQuasis = joinQuasis(quasis, [newQuasi]);
+      return buildTL(rest, newQuasis, expressions);
     }
 
     if (node.type === 'TemplateLiteral') {
-      const nodeQuasis = node.quasis.map((q, i) => (
-        // If this is the first quasi, we want to prepend the temp value so that
-        // it does not get lost. Since there can be multiple quasis, once before
-        // and after the expression, we want to only do this on the first one
-        // and no others, to prevent the string from repeating.
+      const nodeQuasis = node.quasis.map((q) => (
         j.templateElement({
-          cooked: i === 0 ? temp + q.value.cooked : q.value.cooked,
-          raw: i === 0 ? temp + q.value.raw : q.value.raw,
+          cooked: q.value.cooked,
+          raw: q.value.raw,
         }, false)
       ));
 
       // We need to join the last quasi and the next quasi to prevent
       // expressions from shifting.
-      const lastQuasi = quasis.pop();
-      if (lastQuasi) {
-        nodeQuasis[0] = j.templateElement({
-          cooked: lastQuasi.value.cooked + nodeQuasis[0].value.cooked,
-          raw: lastQuasi.value.raw + nodeQuasis[0].value.raw,
-        }, false);
-      }
-
-      const newQuasis = quasis.concat(nodeQuasis);
+      const newQuasis = joinQuasis(quasis, nodeQuasis);
       const newExpressions = expressions.concat(node.expressions);
-      return buildTL(rest, newQuasis, newExpressions, '');
+      return buildTL(rest, newQuasis, newExpressions);
     }
 
-    const nextTemplateElement = j.templateElement({ cooked: temp, raw: temp }, false);
-
-    const newQuasis = quasis.concat(nextTemplateElement);
+    const newQuasis = joinQuasis(quasis, [
+      j.templateElement({ cooked: '', raw: '' }, false),
+      j.templateElement({ cooked: '', raw: '' }, false),
+    ]);
     const newExpressions = expressions.concat(node);
 
-    return buildTL(rest, newQuasis, newExpressions, '');
+    return buildTL(rest, newQuasis, newExpressions);
   }
 
   function convertToTemplateString(p) {

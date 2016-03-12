@@ -35,6 +35,7 @@ test = 'hifoo'; // two strings
 test = `${hi}foo`; // template literal with expression and string
 test = `foo${hi}`; // string and template literal with expression
 test = `hi ${foo} thereoh ${bar} hello`; // template literals with expressions
+test = `${foo}/${bar}`;
 
 test = `(${foo})`;
 test = `(${foo})${bar}`;
