@@ -36,6 +36,7 @@ test = 'hi' + 'foo'; // two strings
 
 test = `${hi}` + 'foo'; // template literal with expression and string
 test = 'foo' + `${hi}`; // string and template literal with expression
+test = `hi ${foo} there` + `oh ${bar} hello`; // template literals with expressions
 
 test = '(' + foo + ')';
 test = '(' + foo + ')' + bar;

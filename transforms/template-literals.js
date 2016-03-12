@@ -106,6 +106,16 @@ module.exports = function templateLiterals(file, api, options) {
         }, false)
       ));
 
+      // We need to join the last quasi and the next quasi to prevent
+      // expressions from shifting.
+      const lastQuasi = quasis.pop();
+      if (lastQuasi) {
+        nodeQuasis[0] = j.templateElement({
+          cooked: lastQuasi.value.cooked + nodeQuasis[0].value.cooked,
+          raw: lastQuasi.value.raw + nodeQuasis[0].value.raw,
+        }, false);
+      }
+
       const newQuasis = quasis.concat(nodeQuasis);
       const newExpressions = expressions.concat(node.expressions);
       return buildTL(rest, newQuasis, newExpressions, '');
