@@ -5,17 +5,17 @@ test = 'truehi';
 
 test = 'hi12';
 test = 'hi123';
-test = 1 + 2 + 'hi';
+test = `${1 + 2}hi`;
 
 test = 'hi1' - 2;
 test = 'hi1' - 2 - 3;
-test = 1 - 2 + 'hi';
+test = `${1 - 2}hi`;
 
 test = `hi${1 * 2}`;
-test = 1 * 2 + 'hi';
+test = `${1 * 2}hi`;
 
 test = `hi${1 / 2}`;
-test = 1 / 2 + 'hi';
+test = `${1 / 2}hi`;
 
 test = `hi${foo}`; // single
 test = `hi${foo}`; // double
@@ -74,7 +74,7 @@ test = `hi${foo.bar}`; // object member
 test = `${foo.bar}hi`;
 test = `(${foo.bar})`;
 
-test = foo + bar + 'hi'; // foo and bar could be numeric
+test = `${foo + bar}hi`; // foo and bar could be numeric
 test = `hi${foo}${bar}`;
 
 test = `foo${bar ? 'bar' : ''}`;

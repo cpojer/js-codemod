@@ -7,11 +7,6 @@
  * - Better handling of comments when they are in the middle of string
  *   concatenation. Currently, those are simply removed. Perhaps in these
  *   situations, the string concatenation should be preserved as-is.
- *
- * - Collapsing BinaryExpressions that on the left are not concatenation (e.g.
- *   `*`) into expressions within the TemplateLiteral. This would allow 1 - 2 +
- *   'foo' to become `${1 - 2}foo`. We currently just don't touch these
- *   expressions.
  */
 module.exports = function templateLiterals(file, api, options) {
   const j = api.jscodeshift;
@@ -34,7 +29,7 @@ module.exports = function templateLiterals(file, api, options) {
       // We need to be careful about not having a stringish node on the left to
       // prevent things like 1 + 2 + 'foo', which should evaluate to '3foo' from
       // becoming '12foo'.
-      return [node];
+      return [node.left, node.right];
     }
 
     return [
