@@ -6,6 +6,7 @@ test = true + 'hi';
 test = 'hi' + 1 + 2;
 test = 'hi' + 1 + 2 + 3;
 test = 1 + 2 + 'hi';
+test = 1 + 2 + 'a' + b;
 
 test = 'hi' + 1 - 2;
 test = 'hi' + 1 - 2 - 3;

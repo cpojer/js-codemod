@@ -9,9 +9,6 @@
  *   assignment. Perhaps in these situations, the string concatenation should be
  *   preserved as-is.
  *
- * - Better handling of code like 1 + 2 + 'foo' + bar which would ideally become
- *   `${1 + 2}foo${bar}`.
- *
  * - Better handling of nested string concatenation inside template literals.
  *   Currently, a + `b${'c' + d}` becomes `${a}b${'c' + d}` but it would ideally
  *   become `${a}b${`c${d}`}`.
@@ -38,15 +35,11 @@ module.exports = function templateLiterals(file, api, options) {
       return [node];
     }
 
-    if (!isStringishOnLeft(node)) {
-      // We need to be careful about not having a stringish node on the left to
-      // prevent things like 1 + 2 + 'foo', which should evaluate to '3foo' from
-      // becoming '12foo'.
-      return [node.left, node.right];
-    }
-
+    // We need to be careful about not having a stringish node on the left to
+    // prevent things like 1 + 2 + 'foo', which should evaluate to '3foo' from
+    // becoming '12foo'.
     return [
-      ...extractNodes(node.left),
+      ...(hasStringish(node.left) ? extractNodes(node.left) : [node.left]),
       ...extractNodes(node.right, node.comments),
     ];
   }
@@ -67,15 +60,9 @@ module.exports = function templateLiterals(file, api, options) {
     return isStringNode(node) || isTemplateLiteralNode(node);
   }
 
-  function isStringishOnLeft(node) {
+  function hasStringish(node) {
     if (isBinaryExpressionNode(node)) {
-      if (isBinaryExpressionNode(node.left)) {
-        return isStringishOnLeft(node.left);
-      } else if (isStringishNode(node.left)) {
-        return true;
-      } else {
-        return isStringishOnLeft(node.right);
-      }
+      return hasStringish(node.left) || hasStringish(node.right);
     }
 
     return isStringishNode(node);

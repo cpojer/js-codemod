@@ -6,6 +6,7 @@ test = 'truehi';
 test = 'hi12';
 test = 'hi123';
 test = `${1 + 2}hi`;
+test = `${1 + 2}a${b}`;
 
 test = 'hi1' - 2;
 test = 'hi1' - 2 - 3;
