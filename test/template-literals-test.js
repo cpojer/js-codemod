@@ -27,6 +27,13 @@ test = 'a\'b' + c; // escaped quote
 test = 'a\"b' + c; // escaped quote
 test = "a\'b" + c; // escaped quote
 test = "a\"b" + c; // escaped quote
+test = 'a\'b' + 'c'; // escaped quote
+test = 'a\'b' + "c\"d"; // escaped quotes of different kinds
+test = 'a\\"b' + c; // non-escaped quote
+
+test = 'a\tb' + c; // tab
+test = 'a\tb' + 'c'; // tab
+test = 'a\u00A9' + b; // unicode escape
 
 test = 'hi\nhello' + foo; // line break
 test = 'hi' + // comment in the middle
@@ -59,6 +66,7 @@ test = `hi${foo}` + bar;
 
 test = '${hi}' + foo; // escaping a string
 test = '${hi}${hello}' + foo; // escaping a string
+test = '${hi}' + '${hello}'; // escaping a string
 
 test = foo + 'hi';
 test = foo + 'hi' + bar;

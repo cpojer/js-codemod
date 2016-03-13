@@ -23,13 +23,19 @@ test = `hi${foo}`; // double
 test = `hi${foo}`; // template literal
 test = foo`hi` + bar; // tagged template literal
 
-test = `a'b${c}`; // escaped quote
-test = `a"b${c}`; // escaped quote
-test = `a'b${c}`; // escaped quote
-test = `a"b${c}`; // escaped quote
+test = `a\'b${c}`; // escaped quote
+test = `a\"b${c}`; // escaped quote
+test = `a\'b${c}`; // escaped quote
+test = `a\"b${c}`; // escaped quote
+test = 'a\'bc'; // escaped quote
+test = 'a\'bc"d'; // escaped quotes of different kinds
+test = `a\\"b${c}`; // non-escaped quote
 
-test = `hi
-hello${foo}`; // line break
+test = `a\tb${c}`; // tab
+test = 'a\tbc'; // tab
+test = `a\u00A9${b}`; // unicode escape
+
+test = `hi\nhello${foo}`; // line break
 test = // comment in the middle
 `hi${foo}`;
 test = // comment in the middle
@@ -60,6 +66,7 @@ test = `hi${foo}${bar}`;
 
 test = `\${hi}${foo}`; // escaping a string
 test = `\${hi}\${hello}${foo}`; // escaping a string
+test = '${hi}${hello}'; // escaping a string
 
 test = `${foo}hi`;
 test = `${foo}hi${bar}`;

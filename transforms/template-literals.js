@@ -4,14 +4,22 @@
  *
  * Areas of improvement:
  *
- * - Better handling of comments when they are in the middle of string
- *   concatenation. Currently, those are added before the string but after the
- *   assignment. Perhaps in these situations, the string concatenation should be
- *   preserved as-is.
+ * - Comments in the middle of string concatenation are currently added before
+ *   the string but after the assignment. Perhaps in these situations, the
+ *   string concatenation should be preserved as-is.
  *
- * - Better handling of nested string concatenation inside template literals.
+ * - Nested concatenation inside template literals is not currently simplified.
  *   Currently, a + `b${'c' + d}` becomes `${a}b${'c' + d}` but it would ideally
  *   become `${a}b${`c${d}`}`.
+ *
+ * - Unnecessary escaping of quotes from the resulting template literals is
+ *   currently not removed. This is possibly the domain of a different
+ *   transform.
+ *
+ * - Unicode escape sequences are converted to unicode characters when
+ *   the simplified concatenation results in a string literal instead of a
+ *   template literal. It would be nice to perserve the original--whether it be
+ *   a unicode escape sequence or a unicode character.
  */
 module.exports = function templateLiterals(file, api, options) {
   const j = api.jscodeshift;
@@ -92,9 +100,16 @@ module.exports = function templateLiterals(file, api, options) {
 
     if (node.type === 'Literal') {
       const cooked = node.value.toString();
-      // For the raw string, we need to escape \ and ${ so that we don't
-      // introduce new interpolation.
-      const raw = cooked.replace(/(\$\{|\\)/g, '\\$1');
+      let raw = node.raw.toString();
+      if (typeof node.value === 'string') {
+        // We need to remove the opening and trailing quote from the raw value
+        // of the string.
+        raw = raw.slice(1, -1);
+
+        // We need to escape ${ to prevent new interpolation.
+        raw = raw.replace(/\$\{/g, '\\${');
+      }
+
       const newQuasi = j.templateElement({ cooked, raw }, false);
       const newQuasis = joinQuasis(quasis, [newQuasi]);
       return buildTL(rest, newQuasis, expressions, newComments);
@@ -140,7 +155,7 @@ module.exports = function templateLiterals(file, api, options) {
 
     // There are no expressions, so let's use a regular string instead of a
     // template literal.
-    const str = tl.quasis.map(q => q.value.raw).join('');
+    const str = tl.quasis.map(q => q.value.cooked).join('');
     const strLiteral = j.literal(str);
     strLiteral.comments = tlOptions.comments;
     return strLiteral;
