@@ -92,13 +92,11 @@ module.exports = function templateLiterals(file, api, options) {
     const [node, ...rest] = nodes;
 
     if (node.type === 'Literal') {
-      let val = node.value.toString();
-      if (isStringNode(node)) {
-        // Need to escape ${ already used by strings so that we don't introduce
-        // new interpolation.
-        val = val.replace(/\$\{/, '\\${');
-      }
-      const newQuasi = j.templateElement({ cooked: val, raw: val }, false);
+      const cooked = node.value.toString();
+      // For the raw string, we need to escape \ and ${ so that we don't that
+      // we don't introduce new interpolation.
+      const raw = cooked.replace(/(\$\{|\\)/, '\\$1');
+      const newQuasi = j.templateElement({ cooked, raw }, false);
       const newQuasis = joinQuasis(quasis, [newQuasi]);
       return buildTL(rest, newQuasis, expressions);
     }
@@ -139,7 +137,8 @@ module.exports = function templateLiterals(file, api, options) {
       return tl;
     }
 
-    // There are no expressions, so let's use a regular string.
+    // There are no expressions, so let's use a regular string instead of a
+    // template literal.
     const str = tl.quasis.map(q => q.value.raw).join('');
     return j.literal(str);
   }

@@ -86,3 +86,4 @@ test = `foo${bar ? 'bar' : ''}`;
 
 foo(`hi${foo}`);
 foo(`${foo}hi`);
+foo(`${a}\\?.*${b}`);
