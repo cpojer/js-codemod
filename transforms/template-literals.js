@@ -11,12 +11,16 @@
  *
  * - Better handling of code like 1 + 2 + 'foo' + bar which would ideally become
  *   `${1 + 2}foo${bar}`.
+ *
+ * - Better handling of nested string concatenation inside template literals.
+ *   Currently, a + `b${'c' + d}` becomes `${a}b${'c' + d}` but it would ideally
+ *   become `${a}b${`c${d}`}`.
  */
 module.exports = function templateLiterals(file, api, options) {
   const j = api.jscodeshift;
   const printOptions = options.printOptions || {quote: 'single'};
 
-  function extractNodes(node, comments) {
+  function extractNodes(node, comments, topLevel = false) {
     if (comments) {
       node.comments = node.comments || [];
       node.comments.push(...comments);
@@ -30,7 +34,7 @@ module.exports = function templateLiterals(file, api, options) {
       return [node];
     }
 
-    if (node.parenthesizedExpression) {
+    if (!topLevel && node.parenthesizedExpression) {
       return [node];
     }
 
@@ -43,7 +47,7 @@ module.exports = function templateLiterals(file, api, options) {
 
     return [
       ...extractNodes(node.left),
-      ...extractNodes(node.right, node.comments)
+      ...extractNodes(node.right, node.comments),
     ];
   }
 
@@ -134,7 +138,7 @@ module.exports = function templateLiterals(file, api, options) {
   }
 
   function convertToTemplateString(p) {
-    const tempNodes = extractNodes(p.node);
+    const tempNodes = extractNodes(p.node, null, true);
 
     if (!tempNodes.some(isStringishNode)) {
       return p.node;

@@ -47,6 +47,7 @@ test = '(' + foo + ')';
 test = '(' + foo + ')' + bar;
 test = '(' + (foo + bar) + ')';
 test = '(' + (1 + 1) + ')';
+test = (a + 'b');
 
 test = `hi${foo}` + bar;
 
@@ -57,6 +58,8 @@ test = foo + 'hi' + bar;
 test = foo + 'hi' + bar + baz;
 
 test = { a: 'hi' + foo }; // in an object
+test = { ['a' + b]: 'c' + d }; // computed properties
+
 test = ['hi' + foo]; // in an array
 test = [
   foo + 'bar', // comment
@@ -86,6 +89,7 @@ test = 'hi' + foo.join(','); // function
 test = 'hi' + foo.bar; // object member
 test = foo.bar + 'hi';
 test = '(' + foo.bar + ')';
+test = 'hi' + foo['bar'];
 
 test = foo + bar + 'hi'; // foo and bar could be numeric
 test = 'hi' + foo + bar;
@@ -95,3 +99,16 @@ test = 'foo' + (bar ? 'bar' : '');
 foo('hi' + foo);
 foo(foo + 'hi');
 foo(a + '\\?.*' + b);
+
+function a(b = 'c' + d) {
+  return b + 'e';
+}
+
+(b = 'c' + d)  => {
+  return b + 'e';
+};
+
+(b = 'c' + d)  => b + 'e';
+(b = 'c' + d)  => (b + 'e');
+
+test = a + 'b' + `c${'d' + e}`; // nested concatenation in template literals
