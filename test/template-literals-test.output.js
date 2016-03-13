@@ -90,6 +90,8 @@ test = `${+'1'}100`;
 test = 1 + +100;
 test = 1 + +'100';
 test = `1${-100}`; // this could probably be better
+test = `1.2a${b}`; // floats
+test = '1.2a'; // floats
 
 test = 1 + 1;
 test = 1 - 1;
