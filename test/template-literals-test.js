@@ -23,6 +23,11 @@ test = "hi" + foo; // double
 test = `hi` + foo; // template literal
 test = foo`hi` + bar; // tagged template literal
 
+test = 'a\'b' + c; // escaped quote
+test = 'a\"b' + c; // escaped quote
+test = "a\'b" + c; // escaped quote
+test = "a\"b" + c; // escaped quote
+
 test = 'hi\nhello' + foo; // line break
 test = 'hi' + // comment in the middle
   foo;
