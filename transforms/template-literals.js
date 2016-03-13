@@ -92,9 +92,9 @@ module.exports = function templateLiterals(file, api, options) {
 
     if (node.type === 'Literal') {
       const cooked = node.value.toString();
-      // For the raw string, we need to escape \ and ${ so that we don't that
-      // we don't introduce new interpolation.
-      const raw = cooked.replace(/(\$\{|\\)/, '\\$1');
+      // For the raw string, we need to escape \ and ${ so that we don't
+      // introduce new interpolation.
+      const raw = cooked.replace(/(\$\{|\\)/g, '\\$1');
       const newQuasi = j.templateElement({ cooked, raw }, false);
       const newQuasis = joinQuasis(quasis, [newQuasi]);
       return buildTL(rest, newQuasis, expressions, newComments);

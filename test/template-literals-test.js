@@ -53,6 +53,7 @@ test = (a + 'b');
 test = `hi${foo}` + bar;
 
 test = '${hi}' + foo; // escaping a string
+test = '${hi}${hello}' + foo; // escaping a string
 
 test = foo + 'hi';
 test = foo + 'hi' + bar;
