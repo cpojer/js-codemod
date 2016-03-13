@@ -28,6 +28,7 @@ test = 'hi' + // comment in the middle
 test = 'hi' // comment in the middle
   + foo;
 test = 'hi' + // comment in the middle
+  'foo' + // and in the middle again
   foo; // and at the end
 
 test = `hi` + 'foo'; // template literal and string
@@ -57,6 +58,11 @@ test = foo + 'hi' + bar + baz;
 
 test = { a: 'hi' + foo }; // in an object
 test = ['hi' + foo]; // in an array
+test = [
+  foo + 'bar', // comment
+  foo + 'bar', /* comment */
+  foo + 'bar', /* comment */ // comment
+];
 
 test = +1 + 100;
 test = +1 + '100';

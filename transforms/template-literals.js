@@ -5,8 +5,9 @@
  * Areas of improvement:
  *
  * - Better handling of comments when they are in the middle of string
- *   concatenation. Currently, those are simply removed. Perhaps in these
- *   situations, the string concatenation should be preserved as-is.
+ *   concatenation. Currently, those are added before the string but after the
+ *   assignment. Perhaps in these situations, the string concatenation should be
+ *   preserved as-is.
  *
  * - Better handling of code like 1 + 2 + 'foo' + bar which would ideally become
  *   `${1 + 2}foo${bar}`.
@@ -15,7 +16,12 @@ module.exports = function templateLiterals(file, api, options) {
   const j = api.jscodeshift;
   const printOptions = options.printOptions || {quote: 'single'};
 
-  function extractNodes(node) {
+  function extractNodes(node, comments) {
+    if (comments) {
+      node.comments = node.comments || [];
+      node.comments.push(...comments);
+    }
+
     if (node.type !== 'BinaryExpression') {
       return [node];
     }
@@ -37,7 +43,7 @@ module.exports = function templateLiterals(file, api, options) {
 
     return [
       ...extractNodes(node.left),
-      ...extractNodes(node.right)
+      ...extractNodes(node.right, node.comments)
     ];
   }
 
@@ -84,12 +90,14 @@ module.exports = function templateLiterals(file, api, options) {
     return leftQuasis.concat(rightQuasis);
   }
 
-  function buildTL(nodes, quasis = [], expressions = []) {
+  function buildTL(nodes, quasis = [], expressions = [], comments = []) {
     if (nodes.length === 0) {
-      return [quasis, expressions];
+      return { quasis, expressions, comments };
     }
 
     const [node, ...rest] = nodes;
+
+    const newComments = comments.concat(node.comments || []);
 
     if (node.type === 'Literal') {
       const cooked = node.value.toString();
@@ -98,7 +106,7 @@ module.exports = function templateLiterals(file, api, options) {
       const raw = cooked.replace(/(\$\{|\\)/, '\\$1');
       const newQuasi = j.templateElement({ cooked, raw }, false);
       const newQuasis = joinQuasis(quasis, [newQuasi]);
-      return buildTL(rest, newQuasis, expressions);
+      return buildTL(rest, newQuasis, expressions, newComments);
     }
 
     if (node.type === 'TemplateLiteral') {
@@ -113,7 +121,7 @@ module.exports = function templateLiterals(file, api, options) {
       // expressions from shifting.
       const newQuasis = joinQuasis(quasis, nodeQuasis);
       const newExpressions = expressions.concat(node.expressions);
-      return buildTL(rest, newQuasis, newExpressions);
+      return buildTL(rest, newQuasis, newExpressions, newComments);
     }
 
     const newQuasis = joinQuasis(quasis, [
@@ -122,7 +130,7 @@ module.exports = function templateLiterals(file, api, options) {
     ]);
     const newExpressions = expressions.concat(node);
 
-    return buildTL(rest, newQuasis, newExpressions);
+    return buildTL(rest, newQuasis, newExpressions, newComments);
   }
 
   function convertToTemplateString(p) {
@@ -132,15 +140,19 @@ module.exports = function templateLiterals(file, api, options) {
       return p.node;
     }
 
-    const tl = j.templateLiteral(...buildTL(tempNodes));
+    const tlOptions = buildTL(tempNodes);
+    const tl = j.templateLiteral(tlOptions.quasis, tlOptions.expressions);
     if (tl.expressions.length > 0) {
+      tl.comments = tlOptions.comments;
       return tl;
     }
 
     // There are no expressions, so let's use a regular string instead of a
     // template literal.
     const str = tl.quasis.map(q => q.value.raw).join('');
-    return j.literal(str);
+    const strLiteral = j.literal(str);
+    strLiteral.comments = tlOptions.comments;
+    return strLiteral;
   }
 
   return j(file.source)

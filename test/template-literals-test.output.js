@@ -24,9 +24,13 @@ test = foo`hi` + bar; // tagged template literal
 
 test = `hi
 hello${foo}`; // line break
-test = `hi${foo}`;
-test = `hi${foo}`;
-test = `hi${foo}`; // and at the end
+test = // comment in the middle
+`hi${foo}`;
+test = // comment in the middle
+`hi${foo}`;
+test = // comment in the middle
+// and in the middle again
+`hifoo${foo}`; // and at the end
 
 test = 'hifoo'; // template literal and string
 test = 'hifoo'; // string and template literal
@@ -55,6 +59,11 @@ test = `${foo}hi${bar}${baz}`;
 
 test = { a: `hi${foo}` }; // in an object
 test = [`hi${foo}`]; // in an array
+test = [
+  `${foo}bar`, // comment
+  `${foo}bar`, /* comment */
+  `${foo}bar`, /* comment */ // comment
+];
 
 test = +1 + 100;
 test = `${+1}100`;
