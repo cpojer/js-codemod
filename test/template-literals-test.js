@@ -101,6 +101,14 @@ test = 'hi' + (foo + 1);
 
 test = 'hi' + foo.join(','); // function
 
+test = 1 + a.toString() + 'b';
+test = 1 + String(a) + 'b';
+test = 1 + new String(a) + 'b';
+
+test = 1 + a.b() + 'c';
+test = 1 + Foo(a) + 'b';
+test = 1 + new Foo(a) + 'b';
+
 test = 'hi' + foo.bar; // object member
 test = foo.bar + 'hi';
 test = '(' + foo.bar + ')';

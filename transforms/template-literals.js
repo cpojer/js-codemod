@@ -56,6 +56,29 @@ module.exports = function templateLiterals(file, api, options) {
     return node.type === 'Literal' && (typeof node.value === 'string');
   }
 
+  function isCastToStringNode(node) {
+    // foo.toString()
+    if (
+      node.type === 'CallExpression' &&
+      node.callee.type === 'MemberExpression' &&
+      node.callee.property.type === 'Identifier' &&
+      node.callee.property.name === 'toString'
+    ) {
+      return true;
+    }
+
+    // String(foo) and new String(foo)
+    if (
+      ['CallExpression', 'NewExpression'].indexOf(node.type) !== -1 &&
+      node.callee.type === 'Identifier' &&
+      node.callee.name === 'String'
+    ) {
+      return true;
+    }
+
+    return false;
+  }
+
   function isTemplateLiteralNode(node) {
     return node.type === 'TemplateLiteral';
   }
@@ -65,7 +88,11 @@ module.exports = function templateLiterals(file, api, options) {
   }
 
   function isStringishNode(node) {
-    return isStringNode(node) || isTemplateLiteralNode(node);
+    return (
+      isStringNode(node) ||
+      isTemplateLiteralNode(node) ||
+      isCastToStringNode(node)
+    );
   }
 
   function hasStringish(node) {
