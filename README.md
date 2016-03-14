@@ -5,21 +5,32 @@ This repository contains a collection of codemod scripts for use with
 
 ### Setup & Run
 
-  * `npm install -g jscodeshift`
-  * `git clone https://github.com/cpojer/js-codemod.git`
-  * `jscodeshift -t <codemod-script> <file>`
-  * Use the `-d` option for a dry-run and use `-p` to print the output
-    for comparison
+```sh
+npm install -g jscodeshift
+git clone https://github.com/cpojer/js-codemod.git
+jscodeshift -t <codemod-script> <file>
+```
+
+Use the `-d` option for a dry-run and use `-p` to print the output for
+comparison.
 
 ### Included Scripts
 
-`use-strict` adds a top-level `'use strict'` statement to JavaScript files
+#### `use-strict`
 
-  * `jscodeshift -t js-codemod/transforms/use-strict.js <file>`
+Adds a top-level `'use strict'` statement to JavaScript files
 
-`arrow-function` transforms functions to arrow functions
+```sh
+jscodeshift -t js-codemod/transforms/use-strict.js <file>
+```
 
-  * `jscodeshift -t js-codemod/transforms/arrow-function.js <file>`
+#### `arrow-function`
+
+Transforms functions to arrow functions
+
+```sh
+jscodeshift -t js-codemod/transforms/arrow-function.js <file>
+```
 
 It will transform `function() { }.bind(this)` calls to `() => {}`. If the only
 statement in the body is a `ReturnStatement` it will remove the curly braces.
@@ -29,15 +40,23 @@ can specify the `--inline-single-expressions=true` option and it will transform
 `function() { relay(); }.bind(this)` to `() => relay()` instead of
 `() => { relay(); }`.
 
-`object-shorthand` transforms object literals to use [ES6 shorthand](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Object_initializer#New_notations_in_ECMAScript_2015)
+#### `object-shorthand`
+
+Transforms object literals to use [ES6 shorthand](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Object_initializer#New_notations_in_ECMAScript_2015)
 for properties and methods.
 
-  * `jscodeshift -t js-codemod/transforms/object-shorthand.js <file>`
+```sh
+jscodeshift -t js-codemod/transforms/object-shorthand.js <file>
+```
 
-`unquote-properties` removes quotes from object properties whose keys are
-strings which are valid identifiers.
+#### `unquote-properties`
 
-  * `jscodeshift -t js-codemod/transforms/unquote-properties.js <file>`
+Removes quotes from object properties whose keys are strings which are valid
+identifiers.
+
+```sh
+jscodeshift -t js-codemod/transforms/unquote-properties.js <file>
+```
 
 ### Included extensions
 
@@ -49,4 +68,6 @@ strings which are valid identifiers.
 Options to [recast](https://github.com/benjamn/recast)'s printer can be provided
 through the `printOptions` command line argument
 
- * `jscodeshift -t transform.js <file> --printOptions='{"quote":"double"}'`
+```sh
+jscodeshift -t transform.js <file> --printOptions='{"quote":"double"}'
+```
