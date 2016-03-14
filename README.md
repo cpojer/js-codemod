@@ -16,14 +16,6 @@ comparison.
 
 ### Included Scripts
 
-#### `use-strict`
-
-Adds a top-level `'use strict'` statement to JavaScript files
-
-```sh
-jscodeshift -t js-codemod/transforms/use-strict.js <file>
-```
-
 #### `arrow-function`
 
 Transforms functions to arrow functions
@@ -39,6 +31,14 @@ single-expression functions will not affect the behavior of your application you
 can specify the `--inline-single-expressions=true` option and it will transform
 `function() { relay(); }.bind(this)` to `() => relay()` instead of
 `() => { relay(); }`.
+
+#### `use-strict`
+
+Adds a top-level `'use strict'` statement to JavaScript files
+
+```sh
+jscodeshift -t js-codemod/transforms/use-strict.js <file>
+```
 
 #### `object-shorthand`
 
