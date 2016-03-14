@@ -49,6 +49,34 @@ for properties and methods.
 jscodeshift -t js-codemod/transforms/object-shorthand.js <file>
 ```
 
+#### `template-literals`
+
+Replaces string concatenation with template literals.
+
+```sh
+jscodeshift -t js-codemod/transforms/template-literals.js <file>
+```
+
+Adapted from ["How to write a codemod" by Ramana Venkata](https://vramana.github.io/blog/2015/12/21/codemod-tutorial/).
+
+Areas of improvement:
+
+- Comments in the middle of string concatenation are currently added before the
+  string but after the assignment. Perhaps in these situations, the string
+  concatenation should be preserved as-is.
+
+- Nested concatenation inside template literals is not currently simplified.
+  Currently, a + `b${'c' + d}` becomes `${a}b${'c' + d}` but it would ideally
+  become ``${a}b${`c${d}`}``.
+
+- Unnecessary escaping of quotes from the resulting template literals is
+  currently not removed. This is possibly the domain of a different transform.
+
+- Unicode escape sequences are converted to unicode characters when the
+  simplified concatenation results in a string literal instead of a template
+  literal. It would be nice to perserve the original--whether it be a unicode
+  escape sequence or a unicode character.
+
 #### `unquote-properties`
 
 Removes quotes from object properties whose keys are strings which are valid
