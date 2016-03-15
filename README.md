@@ -49,6 +49,15 @@ for properties and methods.
 jscodeshift -t js-codemod/transforms/object-shorthand.js <file>
 ```
 
+#### `rm-requires`
+
+Removes any requires where the imported value is not referenced. Additionally
+if any module is required more than once the two requires will be merged.
+
+```sh
+jscodeshift -t js-codemod/transforms/rm-requires.js <file>
+```
+
 #### `template-literals`
 
 Replaces string concatenation with template literals.
