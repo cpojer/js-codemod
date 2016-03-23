@@ -86,6 +86,14 @@ Areas of improvement:
   literal. It would be nice to perserve the original--whether it be a unicode
   escape sequence or a unicode character.
 
+#### `trailing-commas`
+
+Adds trailing commas to array and object literals.
+
+```sh
+jscodeshift -t js-codemod/transforms/trailing-commas.js <file>
+```
+
 #### `unquote-properties`
 
 Removes quotes from object properties whose keys are strings which are valid
