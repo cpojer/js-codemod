@@ -39,6 +39,6 @@ export default function(file, api, options) {
   return root.toSource({
     ...options.printOptions,
     trailingComma: true,
-    wrapColumn: 0, // Makes sure we write each values on a separate line.
+    wrapColumn: 1, // Makes sure we write each values on a separate line.
   });
 }

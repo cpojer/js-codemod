@@ -14,3 +14,7 @@ const array = [
 ];
 
 const array2 = ['hello', 'allo', 'hola'];
+
+test({
+  test: 'test'
+});
