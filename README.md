@@ -136,7 +136,7 @@ Adds trailing commas to array and object literals.
 jscodeshift -t js-codemod/transforms/trailing-commas.js <file>
 ```
 
-#### `unchain-variables
+#### `unchain-variables`
 
 Unchains chained variable declarations.
 
