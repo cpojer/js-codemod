@@ -16,6 +16,12 @@ comparison.
 
 ### Included Scripts
 
+#### `arrow-function-arguments`
+
+```sh
+jscodeshift -t js-codemod/transforms/arrow-function-arguments.js <file>
+```
+
 #### `arrow-function`
 
 Transforms functions to arrow functions
@@ -32,6 +38,26 @@ can specify the `--inline-single-expressions=true` option and it will transform
 `function() { relay(); }.bind(this)` to `() => relay()` instead of
 `() => { relay(); }`.
 
+#### `invalid-requires`
+
+```sh
+jscodeshift -t js-codemod/transforms/invalid-requires.js <file>
+```
+
+#### `jest-update`
+
+```sh
+jscodeshift -t js-codemod/transforms/jest-update.js <file>
+```
+
+#### `no-vars`
+
+Conservatively converts `var` to `const` or `let`.
+
+```sh
+jscodeshift -t js-codemod/transforms/no-vars.js <file>
+```
+
 #### `object-shorthand`
 
 Transforms object literals to use [ES6 shorthand](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Object_initializer#New_notations_in_ECMAScript_2015)
@@ -39,6 +65,24 @@ for properties and methods.
 
 ```sh
 jscodeshift -t js-codemod/transforms/object-shorthand.js <file>
+```
+
+#### `outline-require`
+
+```sh
+jscodeshift -t js-codemod/transforms/outline-require.js <file>
+```
+
+#### `rm-copyProperties`
+
+```sh
+jscodeshift -t js-codemod/transforms/rm-copyProperties.js <file>
+```
+
+#### `rm-merge`
+
+```sh
+jscodeshift -t js-codemod/transforms/rm-merge.js <file>
 ```
 
 #### `rm-requires`
@@ -78,12 +122,26 @@ Areas of improvement:
   literal. It would be nice to perserve the original--whether it be a unicode
   escape sequence or a unicode character.
 
+#### `touchable`
+
+```sh
+jscodeshift -t js-codemod/transforms/touchable.js <file>
+```
+
 #### `trailing-commas`
 
 Adds trailing commas to array and object literals.
 
 ```sh
 jscodeshift -t js-codemod/transforms/trailing-commas.js <file>
+```
+
+#### `unchain-variables
+
+Unchains chained variable declarations.
+
+```sh
+jscodeshift -t js-codemod/transforms/unchain-variables.js <file>
 ```
 
 #### `unquote-properties`
@@ -93,6 +151,12 @@ identifiers.
 
 ```sh
 jscodeshift -t js-codemod/transforms/unquote-properties.js <file>
+```
+
+#### `updated-computed-props`
+
+```sh
+jscodeshift -t js-codemod/transforms/updated-computed-props.js <file>
 ```
 
 #### `use-strict`
