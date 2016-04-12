@@ -32,14 +32,6 @@ can specify the `--inline-single-expressions=true` option and it will transform
 `function() { relay(); }.bind(this)` to `() => relay()` instead of
 `() => { relay(); }`.
 
-#### `use-strict`
-
-Adds a top-level `'use strict'` statement to JavaScript files
-
-```sh
-jscodeshift -t js-codemod/transforms/use-strict.js <file>
-```
-
 #### `object-shorthand`
 
 Transforms object literals to use [ES6 shorthand](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Object_initializer#New_notations_in_ECMAScript_2015)
@@ -102,6 +94,15 @@ identifiers.
 ```sh
 jscodeshift -t js-codemod/transforms/unquote-properties.js <file>
 ```
+
+#### `use-strict`
+
+Adds a top-level `'use strict'` statement to JavaScript files
+
+```sh
+jscodeshift -t js-codemod/transforms/use-strict.js <file>
+```
+
 
 ### Included extensions
 
