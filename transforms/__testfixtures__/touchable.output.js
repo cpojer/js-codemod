@@ -2,9 +2,9 @@
 
 <View>
   <TouchableBounce style={{color: 'red'}}>
-          <Image />
-          <Image />
-        </TouchableBounce>
+    <Image />
+    <Image />
+  </TouchableBounce>
 </View>;
 
 <TouchableBounce>
