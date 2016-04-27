@@ -1,7 +1,9 @@
+const path = require('path');
+
 module.exports = function(file, api, options = {}) {
   if (
-    !file.path.includes('/__tests__/') &&
-    !file.path.includes('/__mocks__/')
+    !file.path.includes(path.sep + '__tests__' + path.sep) &&
+    !file.path.includes(path.sep + '__mocks__' + path.sep)
   ) {
     return null;
   }
