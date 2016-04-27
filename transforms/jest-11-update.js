@@ -64,7 +64,7 @@ module.exports = function(file, api, options = {}) {
           property: {
             name: name => JEST_MOCK_FNS[name],
           },
-        }
+        },
       })
       .forEach(p => {
         p.value.callee.property.name = 'fn';
@@ -74,7 +74,7 @@ module.exports = function(file, api, options = {}) {
         if (
           parent.type == 'MemberExpression' &&
           grandParent.type == 'CallExpression' &&
-      JEST_MOCK_IMPLEMENTATION[parent.property.name]
+          JEST_MOCK_IMPLEMENTATION[parent.property.name]
         ) {
           p.value.arguments = grandParent.arguments;
           j(p.parent.parent).replaceWith(p.value);
