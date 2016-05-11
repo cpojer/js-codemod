@@ -159,3 +159,14 @@ if (true) {
 function useUsedInAFunction() {
   console.log(usedInAFunction);
 }
+
+
+function jasklfjasklfjdsakl() {
+  var {
+    firstPropertyAsPartOfDeepDestructuring: {
+      propertyExtractedFromDeepDestructuring,
+    },
+  } = objectToDeepDestructure;
+
+  propertyExtractedFromDeepDestructuring = 10;
+}

@@ -32,22 +32,14 @@ export default function(file, api) {
   };
 
   const extractNamesFromIdentifierLike = id => {
-    if (id.type === 'ObjectPattern') {
+    if (!id) {
+      return [];
+    } else if (id.type === 'ObjectPattern') {
       return id.properties.map(
-        d => (d.type === 'SpreadProperty' ? d.argument.name : d.value.name)
-      );
+        d => (d.type === 'SpreadProperty' ? [d.argument.name] : extractNamesFromIdentifierLike(d.value))
+      ).reduce((acc, val) => acc.concat(val), []);
     } else if (id.type === 'ArrayPattern') {
-      return id.elements.map(
-        e => {
-          if (!e) {
-            return null;
-          }
-          if (e.type === 'RestElement') {
-            return e.argument.name;
-          }
-          return e.name;
-        }
-      );
+      return id.elements.map(extractNamesFromIdentifierLike).reduce((acc, val) => acc.concat(val), []);
     } else if (id.type === 'Identifier') {
       return [id.name];
     } else if (id.type === 'RestElement') {
@@ -200,60 +192,15 @@ export default function(file, api) {
     const hasAssignmentMutation = j(scopeNode)
       .find(j.AssignmentExpression)
       .filter(n => {
-        if (declarator) {
-          if (declarator.id.type === 'ObjectPattern') {
-            return declarator.id.properties.some(d =>
-              (d.type === 'SpreadProperty' ? d.argument.name : d.value.name) === n.value.left.name
-            );
-          } else if (declarator.id.type === 'ArrayPattern') {
-            return declarator.id.elements.some(d => {
-              if (!d) {
-                return false;
-              }
-              const name = d.type === 'RestElement' ? d.argument.name : d.name;
-              return name === n.value.left.name;
-            });
-          }
-
-          if (n.value.left.type === 'ObjectPattern') {
-            return n.value.left.properties.some(p => p.key.name === declarator.id.name);
-          } else if (n.value.left.type === 'ArrayPattern') {
-            return n.value.left.elements.some(e =>
-              (e.type === 'RestElement' ? e.argument.name : e.name) === declarator.id.name
-            );
-          }
-          return declarator.id.name === n.value.left.name;
-        }
-
-        if (node.value.declarations.some(d => d.id.name === n.value.left.name)) {
-          return true;
-        }
+        return extractNamesFromIdentifierLike(n.value.left).some(name => {
+          return isIdInDeclarator(declarator, name);
+        });
       }).size() > 0;
 
     const hasUpdateMutation = j(scopeNode)
       .find(j.UpdateExpression)
       .filter(n => {
-        if (declarator) {
-          if (declarator.id.type === 'ObjectPattern') {
-            return declarator.id.properties.some(d =>
-              (d.type === 'SpreadProperty' ? d.argument.name : d.value.name) === n.value.argument.name
-            );
-          } else if (declarator.id.type === 'ArrayPattern') {
-            return declarator.id.elements.some(e => {
-              if (!e) {
-                return false;
-              }
-              const name = e.type === 'RestElement' ? e.argument.name : e.name;
-              return name === n.value.argument.name;
-            });
-          }
-
-          return declarator.id.name === n.value.argument.name;
-        }
-
-        if (node.value.declarations.some(d => d.id.name === n.value.argument.name)) {
-          return true;
-        }
+        return isIdInDeclarator(declarator, n.value.argument.name);
       }).size() > 0;
 
     return hasAssignmentMutation || hasUpdateMutation;
