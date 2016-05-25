@@ -14,7 +14,7 @@ const imports = require('jscodeshift-imports');
 module.exports = function(fileInfo, api) {
   const {jscodeshift} = api;
 
-  imports.register(jscodeshift, imports.config.CJSBasicRequire);
+  jscodeshift.use(imports(imports.config.CJSBasicRequire));
 
   // Your transform here.
 }
@@ -45,7 +45,7 @@ module.exports = function(fileInfo, api) {
   const {jscodeshift} = api;
   const {statement} = jscodeshift.template;
 
-  imports.register(jscodeshift, imports.config.CJSBasicRequire);
+  jscodeshift.use(imports(imports.config.CJSBasicRequire));
 
   return jscodeshift(file.source)
     .addImport(statement`

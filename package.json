@@ -17,7 +17,6 @@
     "recast"
   ],
   "dependencies": {
-    "jscodeshift": "^0.3.20",
     "nuclide-format-js-base": "0.0.35"
   },
   "devDependencies": {
@@ -28,6 +27,9 @@
     "eslint": "^1.7.3",
     "fbjs-scripts": "^0.5.0",
     "jest-cli": "^11.0.2"
+  },
+  "peerDependencies": {
+    "jscodeshift": "^0.3.20"
   },
   "jest": {
     "automock": false,
