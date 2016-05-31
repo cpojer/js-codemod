@@ -19,7 +19,7 @@ function mutate() {
 
 const array = ['a', 'b', 'c', 'd'];
 
-for (let letter in array) {
+for (const letter in array) {
   console.log(letter);
 }
 
@@ -30,8 +30,13 @@ const object = {
   'd': 4,
 };
 
-for (let [key, value] of object.entries()) {
+for (const [key, value] of object.entries()) {
   console.log(key, value);
+}
+
+for (let [keyTwo, valueTwo] of object.entries()) {
+  keyTwo = 'something';
+  console.log(keyTwo, valueTwo);
 }
 
 let whileIterator = 10;

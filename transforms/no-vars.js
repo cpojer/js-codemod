@@ -30,6 +30,10 @@ export default function(file, api) {
     }
     return node !== container ? node : null;
   };
+  const isForLoopDeclarationWithoutInit = declaration => {
+    const parentType = declaration.parentPath.value.type;
+    return parentType === 'ForOfStatement' || parentType === 'ForInStatement';
+  };
 
   const extractNamesFromIdentifierLike = id => {
     if (!id) {
@@ -213,9 +217,10 @@ export default function(file, api) {
       return !isTruelyVar(declaration, declarator);
     });
   }).forEach(declaration => {
+    const forLoopWithoutInit = isForLoopDeclarationWithoutInit(declaration);
     if (
       declaration.value.declarations.some(declarator => {
-        return !declarator.init || isMutated(declaration, declarator);
+        return (!declarator.init && !forLoopWithoutInit) || isMutated(declaration, declarator);
       })
     ) {
       declaration.value.kind = 'let';
