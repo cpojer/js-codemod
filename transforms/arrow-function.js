@@ -28,7 +28,7 @@ module.exports = (file, api, options) => {
     false
   );
 
-  const didTransform = root
+  const replacedBoundFunctions = root
     .find(j.CallExpression, {
       callee: {
         type: 'MemberExpression',
@@ -54,5 +54,17 @@ module.exports = (file, api, options) => {
     )
     .size() > 0;
 
-  return didTransform ? root.toSource(printOptions) : null;
+  const replacedCallbacks = root
+    .find(j.FunctionExpression)
+    .filter(path => {
+      return path.parentPath.name === 'arguments' && path.parentPath.value.indexOf(path.value) > -1;
+    })
+    .forEach(path =>
+      j(path).replaceWith(
+        createArrowFunctionExpression(path.value)
+      )
+    )
+    .size() > 0;
+
+  return replacedBoundFunctions || replacedCallbacks ? root.toSource(printOptions) : null;
 };

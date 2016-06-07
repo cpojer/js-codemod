@@ -23,3 +23,13 @@ var fn6 = () => ({
 });
 
 [1, 2, 3].map(x => x * x);
+
+[1, 2, 3].map(x => x * x);
+
+compare(1, 2, (num1, num2) => num1 > num2);
+
+Promise.resolve()
+.then(function() {
+  console.log('foo');
+}.bind(this, 'a'))
+.then(a => 4);
