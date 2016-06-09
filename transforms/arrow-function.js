@@ -5,18 +5,32 @@ module.exports = (file, api, options) => {
   const root = j(file.source);
 
   const getBodyStatement = fn => {
+    // 79 characters fit on a line of length 80
+    const maxWidth = options['max-width'] ? options['max-width'] - 1 : undefined;
+
     if (
       fn.body.type == 'BlockStatement' &&
       fn.body.body.length == 1
     ) {
       const inner = fn.body.body[0];
+
       if (
         options['inline-single-expressions'] &&
         inner.type == 'ExpressionStatement'
       ) {
         return inner.expression;
       } else if (inner.type == 'ReturnStatement') {
-        return inner.argument;
+        const lineStart = fn.loc.start.line;
+        const originalLineLength = fn.loc.lines.getLineLength(lineStart);
+        const approachDifference = 'function(a, b) {'.length - '(a, b) => );'.length;
+        const argumentLength = inner.argument.end - inner.argument.start;
+
+        const newLength = originalLineLength + argumentLength - approachDifference;
+        const tooLong = maxWidth && newLength > maxWidth;
+
+        if (!tooLong) {
+          return inner.argument;
+        }
       }
     }
     return fn.body;
