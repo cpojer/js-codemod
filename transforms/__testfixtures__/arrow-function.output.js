@@ -33,3 +33,29 @@ Promise.resolve()
   console.log('foo');
 }.bind(this, 'a'))
 .then(a => 4);
+
+foo(function(a) {
+  this.bar(function() {
+    return a + this.b;
+  });
+});
+
+foo(function(a) {
+  bar(function() {
+    return a + this.b;
+  });
+});
+
+foo(function(a) {
+  bar(() => a + this.b);
+});
+
+foo(function bar() {
+  console.log('foo');
+});
+
+foo(function baz_prototype() {
+  console.log('foo');
+});
+
+baz_prototype.prototype = {};

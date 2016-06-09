@@ -57,7 +57,11 @@ module.exports = (file, api, options) => {
   const replacedCallbacks = root
     .find(j.FunctionExpression)
     .filter(path => {
-      return path.parentPath.name === 'arguments' && path.parentPath.value.indexOf(path.value) > -1;
+      const isArgument = path.parentPath.name === 'arguments' && path.parentPath.value.indexOf(path.value) > -1;
+      const noThis = j(path).find(j.ThisExpression).size() == 0;
+      const notNamed = !path.value.id || !path.value.id.name;
+
+      return isArgument && noThis && notNamed;
     })
     .forEach(path =>
       j(path).replaceWith(
