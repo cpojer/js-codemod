@@ -24,19 +24,17 @@ jscodeshift -t js-codemod/transforms/arrow-function-arguments.js <file>
 
 #### `arrow-function`
 
-Transforms functions to arrow functions
+Transforms callbacks only when it can guarentee it won't break `this` context in the function. Also transforms `function() { }.bind(this)` calls to `() => {}`. 
 
 ```sh
 jscodeshift -t js-codemod/transforms/arrow-function.js <file>
 ```
 
-It will transform `function() { }.bind(this)` calls to `() => {}`. If the only
-statement in the body is a `ReturnStatement` it will remove the curly braces.
-If you are feeling lucky and you know that returning the value of
-single-expression functions will not affect the behavior of your application you
-can specify the `--inline-single-expressions=true` option and it will transform
-`function() { relay(); }.bind(this)` to `() => relay()` instead of
-`() => { relay(); }`.
+##### Options:
+
+`--inline-single-expressions=true`: If you are feeling lucky and you know that returning the value of single-expression functions will not affect the behavior of your application you can specify the option and it will transform `function() { relay(); }` to `() => relay()` instead of `() => { relay(); }`.
+
+`--max-width=120`: Try the best it can to keep line lengths under the specified length.
 
 #### `invalid-requires`
 

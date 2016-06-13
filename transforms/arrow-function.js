@@ -5,18 +5,32 @@ module.exports = (file, api, options) => {
   const root = j(file.source);
 
   const getBodyStatement = fn => {
+    // 79 characters fit on a line of length 80
+    const maxWidth = options['max-width'] ? options['max-width'] - 1 : undefined;
+
     if (
       fn.body.type == 'BlockStatement' &&
       fn.body.body.length == 1
     ) {
       const inner = fn.body.body[0];
+
       if (
         options['inline-single-expressions'] &&
         inner.type == 'ExpressionStatement'
       ) {
         return inner.expression;
       } else if (inner.type == 'ReturnStatement') {
-        return inner.argument;
+        const lineStart = fn.loc.start.line;
+        const originalLineLength = fn.loc.lines.getLineLength(lineStart);
+        const approachDifference = 'function(a, b) {'.length - '(a, b) => );'.length;
+        const argumentLength = inner.argument.end - inner.argument.start;
+
+        const newLength = originalLineLength + argumentLength - approachDifference;
+        const tooLong = maxWidth && newLength > maxWidth;
+
+        if (!tooLong) {
+          return inner.argument;
+        }
       }
     }
     return fn.body;
@@ -28,7 +42,7 @@ module.exports = (file, api, options) => {
     false
   );
 
-  const didTransform = root
+  const replacedBoundFunctions = root
     .find(j.CallExpression, {
       callee: {
         type: 'MemberExpression',
@@ -54,5 +68,21 @@ module.exports = (file, api, options) => {
     )
     .size() > 0;
 
-  return didTransform ? root.toSource(printOptions) : null;
+  const replacedCallbacks = root
+    .find(j.FunctionExpression)
+    .filter(path => {
+      const isArgument = path.parentPath.name === 'arguments' && path.parentPath.value.indexOf(path.value) > -1;
+      const noThis = j(path).find(j.ThisExpression).size() == 0;
+      const notNamed = !path.value.id || !path.value.id.name;
+
+      return isArgument && noThis && notNamed;
+    })
+    .forEach(path =>
+      j(path).replaceWith(
+        createArrowFunctionExpression(path.value)
+      )
+    )
+    .size() > 0;
+
+  return replacedBoundFunctions || replacedCallbacks ? root.toSource(printOptions) : null;
 };
