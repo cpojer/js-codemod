@@ -15,6 +15,6 @@ jest.fn();
 
 jest.fn(() => { test; });
 jest.fn((banana) => banana);
-jest.fn(function() { test() });
+jest.fn(function() { test(); });
 
 jest.fn().mockReturnValueOnce(123);
