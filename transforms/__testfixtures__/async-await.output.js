@@ -26,3 +26,8 @@ async function countUserVotes(userIds) {
     return acc + count;
   });
 }
+
+async function detructure(key) {
+  const { [key]: result } = await asyncFunc();
+  return result * 3;
+}

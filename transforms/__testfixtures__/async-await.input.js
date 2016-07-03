@@ -27,3 +27,9 @@ function countUserVotes(userIds) {
     });
   });
 }
+
+function detructure(key) {
+  return asyncFunc().then(({ [key]: result }) => {
+    return result * 3;
+  });
+}

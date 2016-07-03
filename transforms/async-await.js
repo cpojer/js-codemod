@@ -31,9 +31,9 @@ export default function transformer(file, api) {
   const genAwaitionDeclarator = (params, exp) => {
     let declaratorId;
     if (params.length > 1) {
-      declaratorId = j.arrayPattern(params.map(param => j.identifier(param.name)));
+      declaratorId = j.arrayPattern(params);
     } else {
-      declaratorId = j.identifier(params[0].name);
+      declaratorId = params[0];
     }
 
     return j.variableDeclaration('const', [
