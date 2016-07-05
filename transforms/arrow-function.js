@@ -13,11 +13,13 @@ module.exports = (file, api, options) => {
       fn.body.body.length == 1
     ) {
       const inner = fn.body.body[0];
+      const comments = (fn.body.comments || []).concat(inner.comments || []);
 
       if (
         options['inline-single-expressions'] &&
         inner.type == 'ExpressionStatement'
       ) {
+        inner.expression.comments = (inner.expression.comments || []).concat(comments);
         return inner.expression;
       } else if (inner.type == 'ReturnStatement') {
         const lineStart = fn.loc.start.line;
@@ -29,6 +31,7 @@ module.exports = (file, api, options) => {
         const tooLong = maxWidth && newLength > maxWidth;
 
         if (!tooLong) {
+          inner.argument.comments = (inner.argument.comments || []).concat(comments);
           return inner.argument;
         }
       }
@@ -36,11 +39,15 @@ module.exports = (file, api, options) => {
     return fn.body;
   };
 
-  const createArrowFunctionExpression = fn => j.arrowFunctionExpression(
-    fn.params,
-    getBodyStatement(fn),
-    false
-  );
+  const createArrowFunctionExpression = fn => {
+    const arrowFunction = j.arrowFunctionExpression(
+      fn.params,
+      getBodyStatement(fn),
+      false
+    );
+    arrowFunction.comments = fn.comments;
+    return arrowFunction;
+  };
 
   const replacedBoundFunctions = root
     .find(j.CallExpression, {
@@ -61,11 +68,19 @@ module.exports = (file, api, options) => {
       path.value.arguments.length == 1 &&
       path.value.arguments[0].type == 'ThisExpression'
     ))
-    .forEach(path =>
-      j(path).replaceWith(
-        createArrowFunctionExpression(path.value.callee.object)
-      )
-    )
+    .forEach(path => {
+      const comments = path.value.comments || [];
+      for (const node of [path.value.callee, path.value.callee.property, path.value.arguments[0]]) {
+        for (const comment of node.comments || []) {
+          comment.leading = false;
+          comment.trailing = true;
+          comments.push(comment);
+        }
+      }
+      const arrowFunction = createArrowFunctionExpression(path.value.callee.object);
+      arrowFunction.comments = (arrowFunction.comments || []).concat(comments);
+      j(path).replaceWith(arrowFunction);
+    })
     .size() > 0;
 
   const replacedCallbacks = root
