@@ -36,9 +36,8 @@ export default function(file, api, options) {
     .filter(arrayHasNoTrailingComma)
     .forEach(forceReprint);
 
-  return root.toSource({
-    ...options.printOptions,
+  return root.toSource(Object.assign({}, options.printOptions, {
     trailingComma: true,
     wrapColumn: 1, // Makes sure we write each values on a separate line.
-  });
+  }));
 }
