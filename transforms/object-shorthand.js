@@ -24,15 +24,26 @@ module.exports = (file, api, options) => {
   const printOptions = options.printOptions || {quote: 'single'};
   const root = j(file.source);
 
+  const isRecursive = (value) => {
+    return !!(
+      value.id &&
+      j(value.body).find(j.Identifier).filter(
+        i => i.node.name === value.id.name
+      ).size() !== 0
+    );
+  };
+
   const canBeSimplified = (key, value) => {
     // Can be simplified if both key and value are the same identifier or if the
-    // property is a method.
+    // property is a method that is not recursive
     if (key.type === 'Identifier') {
       return (
           value.type === 'Identifier' &&
           key.name === value.name
-        ) ||
-        value.type === 'FunctionExpression';
+        ) || (
+          value.type === 'FunctionExpression' &&
+          !isRecursive(value)
+        );
     }
 
     // Can be simplified if the key is a string literal which is equal to the
