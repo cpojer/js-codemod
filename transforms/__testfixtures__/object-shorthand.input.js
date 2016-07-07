@@ -13,4 +13,13 @@ const myObj = {
   ['computed' + 'property']: 1,
   method: function() { },
   method2: () => { },
+  method3: function foo(n) {
+    if (n === 0) {
+      return n;
+    }
+    return foo(n - 1) + n;
+  },
+  method4: function whatever() {
+    return one;
+  },
 };
