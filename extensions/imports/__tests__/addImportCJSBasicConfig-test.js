@@ -229,7 +229,7 @@ describe('addImportCJSBasicConfig', () => {
     `);
   });
 
-  it('should create block if it doesnt exist (use strict)', () => {
+  xit('should create block if it doesnt exist (use strict)', () => {
     const jfile = jscodeshift(`
       /* @flow */
 
