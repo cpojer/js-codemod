@@ -22,10 +22,7 @@ function test(inputCollection, output) {
 }
 
 // Setup JSCodeShift
-const plugins = imports.createPlugins(imports.config.CJSBasicRequire);
-jscodeshift.registerMethods({
-  addBasicImport: plugins.addImport,
-});
+jscodeshift.use(imports(imports.config.CJSBasicRequire))
 
 describe('addImportCJSBasicConfig', () => {
   it('should add to block start', () => {
@@ -35,7 +32,7 @@ describe('addImportCJSBasicConfig', () => {
 
       aaa;
     `)
-    .addBasicImport(statement`
+    .addImport(statement`
       var A0 = require('A0');
     `);
 
@@ -55,7 +52,7 @@ describe('addImportCJSBasicConfig', () => {
 
       aaa;
     `)
-    .addBasicImport(statement`
+    .addImport(statement`
       var A2 = require('A2');
     `);
 
@@ -75,7 +72,7 @@ describe('addImportCJSBasicConfig', () => {
 
       aaa;
     `)
-    .addBasicImport(statement`
+    .addImport(statement`
       var A4 = require('A4');
     `);
 
@@ -98,7 +95,7 @@ describe('addImportCJSBasicConfig', () => {
   //
   //     aaa;
   //   `)
-  //   .addBasicImport(statement`
+  //   .addImport(statement`
   //     var A0 = require('A0');
   //   `);
   //
@@ -124,7 +121,7 @@ describe('addImportCJSBasicConfig', () => {
 
       aaa;
     `)
-    .addBasicImport(statement`
+    .addImport(statement`
       var A0 = require('A0');
     `);
 
@@ -157,7 +154,7 @@ describe('addImportCJSBasicConfig', () => {
   //
   //     aaa;
   //   `)
-  //   .addBasicImport(statement`
+  //   .addImport(statement`
   //     var A5 = require('A5');
   //   `);
   //
@@ -190,7 +187,7 @@ describe('addImportCJSBasicConfig', () => {
 
       aaa;
     `)
-    .addBasicImport(statement`
+    .addImport(statement`
       var A5 = require('A5');
     `);
 
@@ -216,7 +213,7 @@ describe('addImportCJSBasicConfig', () => {
 
       aaa;
     `)
-    .addBasicImport(statement`
+    .addImport(statement`
       var A1 = require('A1');
     `);
 
@@ -237,7 +234,7 @@ describe('addImportCJSBasicConfig', () => {
 
       aaa;
     `)
-    .addBasicImport(statement`
+    .addImport(statement`
       var A1 = require('A1');
     `);
 
@@ -262,13 +259,13 @@ describe('addImportCJSBasicConfig', () => {
 
       aaa;
     `)
-    .addBasicImport(statement`
+    .addImport(statement`
       var A0 = require('A0');
     `)
-    .addBasicImport(statement`
+    .addImport(statement`
       var A2 = require('A2');
     `)
-    .addBasicImport(statement`
+    .addImport(statement`
       var A3 = require('A3');
     `);
 

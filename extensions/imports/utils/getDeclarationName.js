@@ -1,8 +1,6 @@
 'use strict';
 
-const jscs = require('jscodeshift');
-
-function getDeclarationName(node) {
+function getDeclarationName(jscs, node) {
   var declaration = node.declarations[0];
   if (jscs.Identifier.check(declaration.id)) {
     return declaration.id.name;

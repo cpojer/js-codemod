@@ -1,18 +1,23 @@
 'use strict';
 
-const addImport = require('./addImport');
+const makeAddImport = require('./addImport');
 const CJSBasicRequireConfig = require('./config/CJSBasicRequireConfig');
 const FBRequireConfig = require('./config/FBRequireConfig');
 
-module.exports = {
-  register(jscodeshift, config) {
-    const plugins = this.createPlugins(config);
-    jscodeshift.registerMethods(plugins);
-  },
+/**
+ * Create extension. Takes a config fn and returns a `use`-able plugin fn.
+ *
+ * Usage:
+ *   jscodeshift.use(imports(imports.config.CJSBasicRequire));
+ */
+ function imports(makeConfig) {
+  makeConfig = makeConfig || CJSBasicRequireConfig;
 
-  createPlugins(config) {
-    return {
+  return function importsPlugin(jscodeshift) {
+    const config = makeConfig(jscodeshift);
+    const addImport = makeAddImport(jscodeshift);
 
+    jscodeshift.registerMethods({
       /**
        * Add a new import statement.
        *
@@ -28,11 +33,13 @@ module.exports = {
           addImport(config, path, importStatement);
         });
       },
-    };
-  },
-
-  config: {
-    CJSBasicRequire: CJSBasicRequireConfig,
-    FBRequire: FBRequireConfig,
-  },
+    })
+  }
 };
+
+imports.config = {
+  CJSBasicRequire: CJSBasicRequireConfig,
+  FBRequire: FBRequireConfig,
+};
+
+module.exports = imports;

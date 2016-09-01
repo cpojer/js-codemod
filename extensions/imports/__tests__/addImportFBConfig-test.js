@@ -22,10 +22,7 @@ function test(inputCollection, output) {
 }
 
 // Setup JSCodeShift
-const plugins = imports.createPlugins(imports.config.FBRequire);
-jscodeshift.registerMethods({
-  addFBImport: plugins.addImport,
-});
+jscodeshift.use(imports(imports.config.FBRequire))
 
 describe('addImportFBConfig', () => {
   it('should add to block start large', () => {
@@ -37,7 +34,7 @@ describe('addImportFBConfig', () => {
 
       aaa;
     `)
-    .addFBImport(statement`
+    .addImport(statement`
       var A0 = require('A0');
     `);
 
@@ -60,7 +57,7 @@ describe('addImportFBConfig', () => {
 
       aaa;
     `)
-    .addFBImport(statement`
+    .addImport(statement`
       var a0 = require('a0');
     `);
 
@@ -85,7 +82,7 @@ describe('addImportFBConfig', () => {
 
       aaa;
     `)
-    .addFBImport(statement`
+    .addImport(statement`
       var a2 = require('a2');
     `);
 
@@ -111,7 +108,7 @@ describe('addImportFBConfig', () => {
 
       aaa;
     `)
-    .addFBImport(statement`
+    .addImport(statement`
       var a2 = require('a2');
     `);
 
@@ -138,7 +135,7 @@ describe('addImportFBConfig', () => {
 
       aaa;
     `)
-    .addFBImport(statement`
+    .addImport(statement`
       var A1 = require('A1');
     `);
 
@@ -166,13 +163,13 @@ describe('addImportFBConfig', () => {
   //
   //     aaa;
   //   `)
-  //   .addFBImport(statement`
+  //   .addImport(statement`
   //     var A0 = require('A0');
   //   `)
-  //   .addFBImport(statement`
+  //   .addImport(statement`
   //     var a2 = require('a2');
   //   `)
-  //   .addFBImport(statement`
+  //   .addImport(statement`
   //     var A3 = require('A3');
   //   `);
   //

@@ -13,7 +13,9 @@
     "import"
   ],
   "dependencies": {
-    "jscodeshift": "^0.3.0",
     "nuclide-format-js-base": "^0.0.35"
+  },
+  "peerDependencies": {
+    "jscodeshift": "^0.3.0"
   }
 }
