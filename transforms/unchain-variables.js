@@ -33,7 +33,7 @@ module.exports = function(file, api, options) {
       }));
   });
 
-  return chainedDeclarations.size
+  return chainedDeclarations.size()
     ? chainedDeclarations.toSource(printOptions)
     : null;
 };
