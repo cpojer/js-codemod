@@ -24,7 +24,7 @@ jscodeshift -t js-codemod/transforms/arrow-function-arguments.js <file>
 
 #### `arrow-function`
 
-Transforms callbacks only when it can guarentee it won't break `this` context in the function. Also transforms `function() { }.bind(this)` calls to `() => {}`. 
+Transforms callbacks only when it can guarentee it won't break `this` context in the function. Also transforms `function() { }.bind(this)` calls to `() => {}`.
 
 ```sh
 jscodeshift -t js-codemod/transforms/arrow-function.js <file>
@@ -140,6 +140,14 @@ Unchains chained variable declarations.
 
 ```sh
 jscodeshift -t js-codemod/transforms/unchain-variables.js <file>
+```
+
+#### `underscore-to-lodash-native`
+
+Replaces underscore with lodash, while preferring native array prototype methods. Member imports are used by default to allow tree-shaking, but the `--split-imports=true` option will split each lodash import into its own `lodash/<method>` import.
+
+```sh
+jscodeshift -t js-codemod/transforms/underscore-to-lodash-native.js <file>
 ```
 
 #### `unquote-properties`
