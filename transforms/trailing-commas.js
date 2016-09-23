@@ -1,7 +1,7 @@
 /**
  * Adds trailing commas to every object litteral and array.
  */
-export default function(file, api, options) {
+module.exports = function(file, api, options) {
   const j = api.jscodeshift;
 
   const objectHasNoTrailingComma = ({node}) => {
