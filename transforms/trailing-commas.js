@@ -6,7 +6,7 @@ export default function(file, api, options) {
 
   const objectHasNoTrailingComma = ({node}) => {
     // Only transform objects that are on multiple lines.
-    if (node.properties.length === 0 || node.loc.start.line === node.loc.end.line) {
+    if (node.properties.length === 0 || (node.loc && node.loc.start.line === node.loc.end.line)) {
       return false;
     }
     const lastProp = node.properties[node.properties.length - 1];
@@ -36,9 +36,8 @@ export default function(file, api, options) {
     .filter(arrayHasNoTrailingComma)
     .forEach(forceReprint);
 
-  return root.toSource({
-    ...options.printOptions,
+  return root.toSource(Object.assign(options.printOptions || {}, {
     trailingComma: true,
     wrapColumn: 1, // Makes sure we write each values on a separate line.
-  });
+  }));
 }
