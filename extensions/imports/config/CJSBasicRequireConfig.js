@@ -1,8 +1,8 @@
 'use strict';
 
-const StringUtils = require('nuclide-format-js-base/lib/utils/StringUtils');
+const StringUtils = require('nuclide-format-js/lib/common/utils/StringUtils');
 const getDeclarationName = require('../utils/getDeclarationName');
-const isGlobal = require('nuclide-format-js-base/lib/utils/isGlobal');
+const isGlobal = require('nuclide-format-js/lib/common/utils/isGlobal');
 const isValidRequireDeclaration = require('../utils/isValidRequireDeclaration');
 const jscs = require('jscodeshift');
 
