@@ -65,7 +65,7 @@ module.exports = function(fileInfo, { jscodeshift: j }, argOptions) {
     .find(j.ImportDeclaration, isUnderscoreImport)
     .forEach(transformImport(j, options));
   
-  ast // import _ from 'underscore'
+  ast // import _ from 'lodash'
     .find(j.ImportDeclaration, isLodashImport)
     .forEach(transformImport(j, options));
 
