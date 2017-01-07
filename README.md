@@ -144,7 +144,7 @@ jscodeshift -t js-codemod/transforms/unchain-variables.js <file>
 
 #### `underscore-to-lodash-native`
 
-Replaces underscore with lodash, while preferring native array prototype methods. Member imports are used by default to allow tree-shaking, but the `--split-imports=true` option will split each lodash import into its own `lodash/<method>` import.
+Replaces underscore (or lodash) to ES6 + lodash, preferring native ES6 array methods. Member imports are used by default to allow tree-shaking, but the `--split-imports=true` option will split each lodash import into its own `lodash/<method>` import.
 
 ```sh
 jscodeshift -t js-codemod/transforms/underscore-to-lodash-native.js <file>

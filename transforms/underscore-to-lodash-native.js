@@ -56,9 +56,17 @@ module.exports = function(fileInfo, { jscodeshift: j }, argOptions) {
   ast // const _ = require('underscore')
     .find(j.VariableDeclaration, isUnderscoreRequire)
     .forEach(transformRequire(j, options));
+  
+  ast // const _ = require('lodash')
+    .find(j.VariableDeclaration, isLodashRequire)
+    .forEach(transformRequire(j, options));
 
   ast // import _ from 'underscore'
     .find(j.ImportDeclaration, isUnderscoreImport)
+    .forEach(transformImport(j, options));
+  
+  ast // import _ from 'lodash'
+    .find(j.ImportDeclaration, isLodashImport)
     .forEach(transformImport(j, options));
 
   // Restore opening comments/position
@@ -79,7 +87,7 @@ function isUnderscoreExpression(node) {
   );
 }
 
-function isUnderscoreRequire(node) {
+function isRequire(node, required) {
   return (
     node.type === 'VariableDeclaration' &&
     node.declarations.length > 0 &&
@@ -88,15 +96,32 @@ function isUnderscoreRequire(node) {
     node.declarations[0].init.type === 'CallExpression' &&
     node.declarations[0].init.callee &&
     node.declarations[0].init.callee.name === 'require' &&
-    node.declarations[0].init.arguments[0].value === 'underscore'
+    node.declarations[0].init.arguments[0].value === required
+  );
+}
+
+function isUnderscoreRequire(node) {
+  return isRequire(node, 'underscore');
+}
+
+function isLodashRequire(node) {
+  return isRequire(node, 'lodash');
+}
+
+
+function isImport(node,imported) {
+  return (
+    node.type === 'ImportDeclaration' &&
+    node.source.value === imported
   );
 }
 
 function isUnderscoreImport(node) {
-  return (
-    node.type === 'ImportDeclaration' &&
-    node.source.value === 'underscore'
-  );
+  return isImport(node, 'underscore');
+}
+
+function isLodashImport(node) {
+  return isImport(node, 'lodash');
 }
 
 function transformExpression(j, options) {
