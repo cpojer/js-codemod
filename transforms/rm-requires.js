@@ -22,7 +22,7 @@ module.exports = (file, api, options) => {
     }
 
     // We need this to make sure the JSX transform can use `React`
-    if (requireName === 'React') {
+    if (requireName === 'react') {
       return false;
     }
 
