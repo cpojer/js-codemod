@@ -83,6 +83,12 @@ jscodeshift -t js-codemod/transforms/rm-copyProperties.js <file>
 jscodeshift -t js-codemod/transforms/rm-merge.js <file>
 ```
 
+#### `rm-object-assign`
+
+```sh
+jscodeshift -t js-codemod/transforms/rm-object-assign.js <file>
+```
+
 #### `rm-requires`
 
 Removes any requires where the imported value is not referenced. Additionally
