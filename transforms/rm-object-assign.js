@@ -1,17 +1,27 @@
 module.exports = (file, api, options) => {
   const j = api.jscodeshift;
-  const flatten = array => [].concat(...array);
   const printOptions = options.printOptions || { quote: 'single' };
   const root = j(file.source);
 
   const rmObjectAssignCall = path =>
     j(path).replaceWith(
       j.objectExpression(
-        flatten(
-          path.value.arguments.map(
-            a => a.type === 'ObjectExpression' ? a.properties : j.spreadProperty(a)
-          )
-        )
+        path.value.arguments.reduce(
+          (allProperties, { comments, ...argument }) => {
+            if (argument.type === 'ObjectExpression') {
+              const { properties } = argument;
+              // Copy comments.
+              if (properties.length > 0 && comments && comments.length > 0) {
+                properties[0].comments = [
+                  ...(properties[0].comments || []),
+                  ...(comments || [])
+                ];
+              }
+              return [...allProperties, ...properties];
+            }
+
+            return [...allProperties, { ...j.spreadProperty(argument), comments }];
+          }, [])
       )
     );
 
