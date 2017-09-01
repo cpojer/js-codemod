@@ -36,6 +36,14 @@ jscodeshift -t js-codemod/transforms/arrow-function.js <file>
 
 `--max-width=120`: Try the best it can to keep line lengths under the specified length.
 
+#### `indexof-to-includes`
+
+Transforms code like `foo.indexOf(bar) > -1` to `foo.includes(bar)`.
+
+```sh
+jscodeshift -t js-codemod/transforms/indexof-to-includes.js <file>
+```
+
 #### `invalid-requires`
 
 ```sh
