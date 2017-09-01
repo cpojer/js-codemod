@@ -56,6 +56,17 @@ Conservatively converts `var` to `const` or `let`.
 jscodeshift -t js-codemod/transforms/no-vars.js <file>
 ```
 
+#### `object-create-to-class`
+
+Converts 
+[function constructor + Object.create](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object/create) 
+usages into 
+[es6 class declarations](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Classes).
+
+```sh
+jscodeshift -t js-codemod/transforms/object-create-to-class.js <file>
+```
+
 #### `object-shorthand`
 
 Transforms object literals to use [ES6 shorthand](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Object_initializer#New_notations_in_ECMAScript_2015)
