@@ -48,6 +48,10 @@ jscodeshift -t js-codemod/transforms/invalid-requires.js <file>
 jscodeshift -t js-codemod/transforms/jest-update.js <file>
 ```
 
+#### `jest-rm-jasmine-this`
+
+Convert Jasmine-style code using beforeEach`this` properties into Jest-style shared `let` code.
+
 #### `no-vars`
 
 Conservatively converts `var` to `const` or `let`.
