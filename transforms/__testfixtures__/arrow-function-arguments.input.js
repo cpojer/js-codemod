@@ -26,3 +26,5 @@ var fn4 = function(a, b, c) {
 };
 
 var fn5 = (a, ...b) => arguments;
+
+var fn7 = (ref) => console.log(ref.arguments);
