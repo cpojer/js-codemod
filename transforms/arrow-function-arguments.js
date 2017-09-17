@@ -14,6 +14,8 @@ module.exports = (file, api, options) => {
       fn.generator
     );
 
+  const filterMemberExpressions = path => path.parent.value.type !== "MemberExpression"
+
   const filterArrowFunctions = path => {
     while (path.parent) {
       switch (path.value.type) {
@@ -71,6 +73,7 @@ module.exports = (file, api, options) => {
 
   const didTransform = root
     .find(j.Identifier, {name: ARGUMENTS})
+    .filter(filterMemberExpressions)
     .filter(filterArrowFunctions)
     .forEach(updateArgumentsCalls)
     .size() > 0;
