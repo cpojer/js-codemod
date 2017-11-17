@@ -89,8 +89,9 @@ module.exports = (file, api, options) => {
       const isArgument = path.parentPath.name === 'arguments' && path.parentPath.value.indexOf(path.value) > -1;
       const noThis = j(path).find(j.ThisExpression).size() == 0;
       const notNamed = !path.value.id || !path.value.id.name;
+      const noArgumentsRef = j(path).find(j.Identifier).filter(idPath => idPath.node.name === 'arguments' && idPath.scope.depth === path.get('body').scope.depth).size() === 0;
 
-      return isArgument && noThis && notNamed;
+      return isArgument && noThis && notNamed && noArgumentsRef;
     })
     .forEach(path =>
       j(path).replaceWith(
