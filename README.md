@@ -24,7 +24,7 @@ jscodeshift -t js-codemod/transforms/arrow-function-arguments.js <file>
 
 #### `arrow-function`
 
-Transforms callbacks only when it can guarentee it won't break `this` context in the function. Also transforms `function() { }.bind(this)` calls to `() => {}`.
+Transforms callbacks only when it can guarantee it won't break `this` context in the function. Also transforms `function() { }.bind(this)` calls to `() => {}`.
 
 ```sh
 jscodeshift -t js-codemod/transforms/arrow-function.js <file>
