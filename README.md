@@ -48,6 +48,14 @@ jscodeshift -t js-codemod/transforms/invalid-requires.js <file>
 jscodeshift -t js-codemod/transforms/jest-update.js <file>
 ```
 
+#### `no-reassign-params`
+
+Converts functions to not reassign to parameters. This is useful to turn on in conjunction with [Flow's const_params](https://flow.org/en/docs/config/options/#toc-experimental-const-params-boolean) option.
+
+```sh
+jscodeshift -t js-codemod/transforms/no-reassign-params.js <file>
+```
+
 #### `no-vars`
 
 Conservatively converts `var` to `const` or `let`.
