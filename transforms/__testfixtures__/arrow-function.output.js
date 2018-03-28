@@ -69,3 +69,11 @@ foo(function baz_prototype() {
 });
 
 baz_prototype.prototype = {};
+
+var generatorFunc = function* () {
+  console.log('I shall not be transformed!');
+}.bind(this);
+
+foo(function* () {
+  console.log('I shall not be transformed!');
+});
