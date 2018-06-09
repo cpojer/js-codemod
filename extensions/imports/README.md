@@ -22,10 +22,10 @@ module.exports = function(fileInfo, api) {
 
 Different configs will be needed based on your code style, this extension comes
 with two default configs:
- - [Basic commonJS style](config/CJSBasicRequireConfig.js), all requires in one
+ - [Basic commonJS style](./config/CJSBasicRequireConfig.js), all requires in one
 block.
- - [Facebook style](config/FBRequireConfig.js), requires are split by the case
-of the module's name.
+ - [Facebook style](./config/FBRequireConfig.js), requires are split by the case
+of the module's name
 
 You can also provide your own custom config.
 
