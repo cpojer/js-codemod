@@ -8,6 +8,11 @@ module.exports = (file, api, options) => {
   const root = j(file.source);
 
   const isValidIdentifierNameForProperty = (name) => {
+    
+    if (/^0[xbo]?\d+$/.test(name)) {
+      return false;
+    }
+    
     try {
       new Function(`({${name}: 1})`)(); //eslint-disable-line no-new-func
     } catch (e) {
