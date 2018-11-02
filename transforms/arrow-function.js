@@ -22,6 +22,11 @@ module.exports = (file, api, options) => {
         inner.expression.comments = (inner.expression.comments || []).concat(comments);
         return inner.expression;
       } else if (inner.type == 'ReturnStatement') {
+        if (inner.argument === null) {
+          // The rare case of a function with a lone return statement.
+          fn.body.body = [];
+          return fn.body;
+        }
         const lineStart = fn.loc.start.line;
         const originalLineLength = fn.loc.lines.getLineLength(lineStart);
         const approachDifference = 'function(a, b) {'.length - '(a, b) => );'.length;
