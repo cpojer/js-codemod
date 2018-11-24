@@ -98,7 +98,7 @@ module.exports = function(file, api) {
     const {scopeNode, isInFor} = getScopeNode(blockScopeNode);
 
     // if we are in a for loop of some kind, and the variable
-    // is referenced within a closure, rever to `var`
+    // is referenced within a closure, revert to `var`
     // It would be safe to do the conversion if you can verify
     // that the callback is run synchronously
     const isUsedInClosure = (
@@ -164,7 +164,7 @@ module.exports = function(file, api) {
             ).size() === 0
           );
 
-          // if a variable is used before it is declared, rever to
+          // if a variable is used before it is declared, revert to
           // `var`
           // TODO: If `isDeclaredTwice` is improved, and there is
           //       another declaration for this variable, it may be
