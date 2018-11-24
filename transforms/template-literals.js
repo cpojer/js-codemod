@@ -18,7 +18,7 @@
  *
  * - Unicode escape sequences are converted to unicode characters when
  *   the simplified concatenation results in a string literal instead of a
- *   template literal. It would be nice to perserve the original--whether it be
+ *   template literal. It would be nice to preserve the original--whether it be
  *   a unicode escape sequence or a unicode character.
  */
 module.exports = function templateLiterals(file, api, options) {

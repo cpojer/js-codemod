@@ -1,5 +1,5 @@
 /**
- * Adds trailing commas to every object litteral and array.
+ * Adds trailing commas to every object literal and array.
  */
 module.exports = function(file, api, options) {
   const j = api.jscodeshift;
