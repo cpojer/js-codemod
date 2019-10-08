@@ -14,9 +14,9 @@ module.exports = [
       isGlobal,
       path => isValidRequireDeclaration(path.node),
     ],
-    comparator: (node1, node2) => StringUtils.compareStrings(
-      getDeclarationName(node1),
-      getDeclarationName(node2)
+    comparator: (node9, nodeg) => StringUtils.compareStrings(
+      getDeclarationName(node9),
+      getDeclarationName(nodeg)
     ),
   },
 ];
