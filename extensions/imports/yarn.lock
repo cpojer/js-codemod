@@ -292,8 +292,8 @@ core-js@^1.0.0:
   resolved "https://registry.yarnpkg.com/core-js/-/core-js-1.2.7.tgz#652294c14651db28fa93bd2d5ff2983a4f08c636"
 
 debug@^2.1.1:
-  version "2.6.8"
-  resolved "https://registry.yarnpkg.com/debug/-/debug-2.6.8.tgz#e731531ca2ede27d188222427da17821d68ff4fc"
+  version "2.6.9"
+  resolved "https://registry.yarnpkg.com/debug/-/debug-2.6.9.tgz#5d128515df134ff327e90a4c93f4e077a536341f"
   dependencies:
     ms "2.0.0"
 
@@ -558,7 +558,7 @@ js-tokens@1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/js-tokens/-/js-tokens-1.0.1.tgz#cc435a5c8b94ad15acb7983140fc80182c89aeae"
 
-jscodeshift@0.3.20, jscodeshift@^0.3.0:
+jscodeshift@0.3.20:
   version "0.3.20"
   resolved "https://registry.yarnpkg.com/jscodeshift/-/jscodeshift-0.3.20.tgz#1e8e7f1c7207d3ab91ae21f160281561156f7caa"
   dependencies:
