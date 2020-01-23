@@ -60,6 +60,7 @@ module.exports = (file, api, options) => {
         type: 'MemberExpression',
         object: {
           type: 'FunctionExpression',
+          generator: false,
         },
         property: {
           type: 'Identifier',
@@ -89,7 +90,9 @@ module.exports = (file, api, options) => {
     .size() > 0;
 
   const replacedCallbacks = root
-    .find(j.FunctionExpression)
+    .find(j.FunctionExpression, {
+      generator: false,
+    })
     .filter(path => {
       const isArgument = path.parentPath.name === 'arguments' && path.parentPath.value.indexOf(path.value) > -1;
       const noThis = j(path).find(j.ThisExpression).size() == 0;
