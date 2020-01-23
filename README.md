@@ -195,7 +195,7 @@ jscodeshift -t js-codemod/transforms/use-strict.js <file>
 
 ### Recast Options
 
-[Options to recast's printer](https://github.com/benjamn/recast/blob/master/lib/options.js) can be provided
+[Options to recast's printer](https://github.com/benjamn/recast/blob/master/lib/options.ts) can be provided
 through the `printOptions` command line argument
 
 ```sh
