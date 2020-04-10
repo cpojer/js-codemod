@@ -156,12 +156,61 @@ function transformNativeMethod(j, ast) {
   );
 }
 
+function remapMethodNameIfNoDirectMatch(methodName) {
+  switch (methodName) {
+    case "findWhere":
+      return "find";
+    case "pluck":
+      return "map";
+    default:
+      return methodName;
+  }
+}
+
 function transformUnderscoreMethod(j, ast) {
-  const methodName = ast.node.callee.property.name;
-  j.__methods[methodName] = true;
-  j(ast).replaceWith(
-    j.callExpression(j.identifier(methodName), ast.node.arguments)
+  // Replaces methodName with the corresponding lodash function if a direct mapping does not exist.
+  // We may need to get more clever than this if signatures/other logic also need to change
+  const methodName = remapMethodNameIfNoDirectMatch(
+    ast.node.callee.property.name
   );
+
+  if (methodName === "extend") {
+    // This transforms e.g. `_.extend(result, metadata);` => `result = { ...result, ...metadata };`
+    j(ast).replaceWith(
+      j.assignmentExpression(
+        "=",
+        j.identifier(ast.value.arguments[0].name),
+        j.objectExpression(
+          ast.value.arguments.reduce(
+            (allProperties, { comments, ...argument }) => {
+              if (argument.type === "ObjectExpression") {
+                const { properties } = argument;
+                // Copy comments.
+                if (properties.length > 0 && comments && comments.length > 0) {
+                  properties[0].comments = [
+                    ...(properties[0].comments || []),
+                    ...(comments || []),
+                  ];
+                }
+                return [...allProperties, ...properties];
+              }
+
+              return [
+                ...allProperties,
+                { ...j.spreadProperty(argument), comments },
+              ];
+            },
+            []
+          )
+        )
+      )
+    );
+  } else {
+    j.__methods[methodName] = true;
+    j(ast).replaceWith(
+      j.callExpression(j.identifier(methodName), ast.node.arguments)
+    );
+  }
 }
 
 function transformRequire(j, options) {
