@@ -1,30 +1,33 @@
 const DEFAULT_OPTIONS = {
-  'split-imports': false,
+  "split-imports": false,
 };
 
 const NATIVE_METHODS = {
-  forEach: 'forEach',
-  each: 'forEach',
-  map: 'map',
-  collect: 'map',
-  filter: 'filter',
-  select: 'filter',
-  every: 'every',
-  some: 'some',
-  find: 'find',
-  detect: 'find',
-  contains: 'includes',
-  reduce: 'reduce',
-  inject: 'reduce',
-  indexOf: 'indexOf',
-  lastIndexOf: 'lastIndexOf',
+  forEach: "forEach",
+  each: "forEach",
+  map: "map",
+  collect: "map",
+  filter: "filter",
+  select: "filter",
+  every: "every",
+  some: "some",
+  find: "find",
+  detect: "find",
+  contains: "includes",
+  reduce: "reduce",
+  inject: "reduce",
+  indexOf: "indexOf",
+  lastIndexOf: "lastIndexOf",
   first: (j, identifier) => j.memberExpression(identifier, j.literal(0)),
-  last: (j, identifier) => j.memberExpression(identifier,
-    j.binaryExpression('-',
-      j.memberExpression(identifier, j.identifier('length')),
-      j.literal(1)
-    )
-  ),
+  last: (j, identifier) =>
+    j.memberExpression(
+      identifier,
+      j.binaryExpression(
+        "-",
+        j.memberExpression(identifier, j.identifier("length")),
+        j.literal(1)
+      )
+    ),
 };
 
 /**
@@ -41,11 +44,11 @@ const NATIVE_METHODS = {
  * 1. Does not check for variables with same name in scope
  * 2. Knows nothing of types, so objects using _ methods will break
  */
-module.exports = function(fileInfo, { jscodeshift: j }, argOptions) {
+module.exports = function (fileInfo, { jscodeshift: j }, argOptions) {
   const options = Object.assign({}, DEFAULT_OPTIONS, argOptions);
   const ast = j(fileInfo.source);
   // Cache opening comments/position
-  const { comments, loc } = ast.find(j.Program).get('body', 0).node;
+  const { comments, loc } = ast.find(j.Program).get("body", 0).node;
   // Cache of underscore methods used
   j.__methods = {};
 
@@ -56,7 +59,7 @@ module.exports = function(fileInfo, { jscodeshift: j }, argOptions) {
   ast // const _ = require('underscore')
     .find(j.VariableDeclaration, isUnderscoreRequire)
     .forEach(transformRequire(j, options));
-  
+
   ast // const _ = require('lodash')
     .find(j.VariableDeclaration, isLodashRequire)
     .forEach(transformRequire(j, options));
@@ -64,64 +67,60 @@ module.exports = function(fileInfo, { jscodeshift: j }, argOptions) {
   ast // import _ from 'underscore'
     .find(j.ImportDeclaration, isUnderscoreImport)
     .forEach(transformImport(j, options));
-  
+
   ast // import _ from 'lodash'
     .find(j.ImportDeclaration, isLodashImport)
     .forEach(transformImport(j, options));
 
   // Restore opening comments/position
-  Object.assign(ast.find(j.Program).get('body', 0).node, { comments, loc });
+  Object.assign(ast.find(j.Program).get("body", 0).node, { comments, loc });
 
   return ast.toSource({
     arrowParensAlways: true,
-    quote: 'single',
+    quote: "single",
   });
 };
 
 function isUnderscoreExpression(node) {
   return (
-    node.type === 'CallExpression' &&
-    node.callee.type === 'MemberExpression' &&
+    node.type === "CallExpression" &&
+    node.callee.type === "MemberExpression" &&
     node.callee.object &&
-    node.callee.object.name === '_'
+    node.callee.object.name === "_"
   );
 }
 
 function isRequire(node, required) {
   return (
-    node.type === 'VariableDeclaration' &&
+    node.type === "VariableDeclaration" &&
     node.declarations.length > 0 &&
-    node.declarations[0].type === 'VariableDeclarator' &&
+    node.declarations[0].type === "VariableDeclarator" &&
     node.declarations[0].init &&
-    node.declarations[0].init.type === 'CallExpression' &&
+    node.declarations[0].init.type === "CallExpression" &&
     node.declarations[0].init.callee &&
-    node.declarations[0].init.callee.name === 'require' &&
+    node.declarations[0].init.callee.name === "require" &&
     node.declarations[0].init.arguments[0].value === required
   );
 }
 
 function isUnderscoreRequire(node) {
-  return isRequire(node, 'underscore');
+  return isRequire(node, "underscore");
 }
 
 function isLodashRequire(node) {
-  return isRequire(node, 'lodash');
+  return isRequire(node, "lodash");
 }
 
-
-function isImport(node,imported) {
-  return (
-    node.type === 'ImportDeclaration' &&
-    node.source.value === imported
-  );
+function isImport(node, imported) {
+  return node.type === "ImportDeclaration" && node.source.value === imported;
 }
 
 function isUnderscoreImport(node) {
-  return isImport(node, 'underscore');
+  return isImport(node, "underscore");
 }
 
 function isLodashImport(node) {
-  return isImport(node, 'lodash');
+  return isImport(node, "lodash");
 }
 
 function transformExpression(j, options) {
@@ -129,7 +128,7 @@ function transformExpression(j, options) {
     const methodName = ast.node.callee.property.name;
     const nativeMapping = NATIVE_METHODS[methodName];
     if (nativeMapping) {
-      if (typeof nativeMapping === 'function') {
+      if (typeof nativeMapping === "function") {
         transformNativeSpecial(j, ast);
       } else {
         transformNativeMethod(j, ast);
@@ -151,9 +150,7 @@ function transformNativeMethod(j, ast) {
   const nativeMapping = NATIVE_METHODS[methodName];
   j(ast).replaceWith(
     j.callExpression(
-      j.memberExpression(
-        ast.node.arguments[0], j.identifier(nativeMapping)
-      ),
+      j.memberExpression(ast.node.arguments[0], j.identifier(nativeMapping)),
       ast.node.arguments.slice(1)
     )
   );
@@ -172,11 +169,14 @@ function transformRequire(j, options) {
   return (ast) => {
     if (imports.length === 0) {
       j(ast).remove();
-    } else if (options['split-imports']) {
+    } else if (options["split-imports"]) {
       j(ast).replaceWith(buildSplitImports(j, imports));
     } else {
       j(ast).replaceWith(
-        j.importDeclaration(getImportSpecifiers(j, imports), j.literal('lodash'))
+        j.importDeclaration(
+          getImportSpecifiers(j, imports),
+          j.literal("lodash")
+        )
       );
     }
   };
@@ -185,10 +185,10 @@ function transformRequire(j, options) {
 function transformImport(j, options) {
   const imports = Object.keys(j.__methods);
   return (ast) => {
-    ast.node.source = j.literal('lodash');
+    ast.node.source = j.literal("lodash");
     if (imports.length === 0) {
       j(ast).remove();
-    } else if (options['split-imports']) {
+    } else if (options["split-imports"]) {
       j(ast).replaceWith(buildSplitImports(j, imports));
     } else {
       ast.node.specifiers = getImportSpecifiers(j, imports);
@@ -197,13 +197,16 @@ function transformImport(j, options) {
 }
 
 function buildSplitImports(j, imports) {
-  return imports.map(name => {
-    return j.importDeclaration([j.importDefaultSpecifier(j.identifier(name))], j.literal(`lodash/${name}`));
+  return imports.map((name) => {
+    return j.importDeclaration(
+      [j.importDefaultSpecifier(j.identifier(name))],
+      j.literal(`lodash/${name}`)
+    );
   });
 }
 
 function getImportSpecifiers(j, imports) {
-  return imports.map(name => {
+  return imports.map((name) => {
     return j.importSpecifier(j.identifier(name));
   });
 }
