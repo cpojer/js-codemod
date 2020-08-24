@@ -11,6 +11,8 @@ defineTest(__dirname, 'arrow-function', {
 });
 defineTest(__dirname, 'arrow-function', {}, 'arrow-function2');
 
+defineTest(__dirname, 'arrow-function', {}, 'arrow-function-async');
+
 defineTest(__dirname, 'arrow-function', {
   'max-width': 40,
 }, 'arrow-function-length-40');

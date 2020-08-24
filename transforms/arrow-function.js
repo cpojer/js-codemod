@@ -92,6 +92,7 @@ module.exports = (file, api, options) => {
   const replacedCallbacks = root
     .find(j.FunctionExpression, {
       generator: false,
+      async: false
     })
     .filter(path => {
       const isArgument = path.parentPath.name === 'arguments' && path.parentPath.value.indexOf(path.value) > -1;
