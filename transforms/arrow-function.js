@@ -51,6 +51,7 @@ module.exports = (file, api, options) => {
       false
     );
     arrowFunction.comments = fn.comments;
+    arrowFunction.async = fn.async;
     return arrowFunction;
   };
 
